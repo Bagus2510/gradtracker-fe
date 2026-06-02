@@ -1,0 +1,40 @@
+# GradTracker Frontend — Docker Compose
+#
+# Manages: Next.js frontend only
+# Requires: gradtracker-be stack running first (provides gradtracker-network)
+#
+# Usage (run AFTER backend is up):
+#   docker compose up --build -d
+#   docker compose down
+#
+# Full stack shortcut (from parent folder):
+#   docker compose -f gradtracker-be/docker-compose.yml -f gradtracker-fe/docker-compose.yml up --build
+
+services:
+  gradtracker-fe:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    container_name: gradtracker-fe
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: 1
+    ports:
+      - "3000:3000"
+    networks:
+      - gradtracker-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  gradtracker-network:
+    external: true
+    name: gradtracker-network
