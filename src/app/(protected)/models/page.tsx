@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/context/auth-context";
+import { useI18n } from "@/context/i18n-context";
 import { fetchMLModels, uploadMLModel, activateMLModel, deleteMLModel } from "@/lib/api";
 import type { MLModel } from "@/types";
 import { cn } from "@/lib/utils";
@@ -22,6 +23,7 @@ import {
 // ── Upload form ────────────────────────────────────────────────────────────────
 
 function UploadModelCard({ onUploaded }: { onUploaded: (m: MLModel) => void }) {
+  const { t } = useI18n();
   const fileRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -90,7 +92,7 @@ function UploadModelCard({ onUploaded }: { onUploaded: (m: MLModel) => void }) {
   return (
     <form onSubmit={handleSubmit} className="rounded-xl border bg-card p-5 shadow-sm space-y-4">
       <h3 className="flex items-center gap-2 text-sm font-semibold">
-        <Upload className="h-4 w-4 text-primary" /> Upload Model Baru
+        <Upload className="h-4 w-4 text-primary" /> {t("modelsPage.uploadTitle")}
       </h3>
 
       {/* Drop zone */}
@@ -123,8 +125,8 @@ function UploadModelCard({ onUploaded }: { onUploaded: (m: MLModel) => void }) {
         ) : (
           <div className="flex flex-col items-center gap-2 text-muted-foreground">
             <BrainCircuit className="h-8 w-8 opacity-40" />
-            <p className="text-sm font-medium">Drag & drop file model di sini</p>
-            <p className="text-xs">atau klik untuk pilih file (.pkl / .joblib)</p>
+            <p className="text-sm font-medium">{t("modelsPage.uploadDrag")}</p>
+            <p className="text-xs">{t("modelsPage.uploadClick")}</p>
           </div>
         )}
       </div>
@@ -138,7 +140,7 @@ function UploadModelCard({ onUploaded }: { onUploaded: (m: MLModel) => void }) {
 
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="space-y-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Nama Model *</span>
+          <span className="text-xs font-medium text-muted-foreground">{t("modelsPage.uploadName")}</span>
           <input
             required
             className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
@@ -148,9 +150,9 @@ function UploadModelCard({ onUploaded }: { onUploaded: (m: MLModel) => void }) {
           />
         </label>
         <label className="space-y-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Algoritma *</span>
+          <span className="text-xs font-medium text-muted-foreground">{t("modelsPage.uploadAlgo")}</span>
           <select
-            className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
             value={form.algorithm}
             onChange={(e) => setForm((p) => ({ ...p, algorithm: e.target.value }))}
           >
@@ -158,7 +160,7 @@ function UploadModelCard({ onUploaded }: { onUploaded: (m: MLModel) => void }) {
           </select>
         </label>
         <label className="space-y-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Versi</span>
+          <span className="text-xs font-medium text-muted-foreground">{t("modelsPage.uploadVersion")}</span>
           <input
             className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
             placeholder="1.0.0"
@@ -167,7 +169,7 @@ function UploadModelCard({ onUploaded }: { onUploaded: (m: MLModel) => void }) {
           />
         </label>
         <label className="space-y-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Akurasi (%)</span>
+          <span className="text-xs font-medium text-muted-foreground">{t("modelsPage.uploadAccuracy")}</span>
           <input
             type="number"
             step="0.01"
@@ -180,7 +182,7 @@ function UploadModelCard({ onUploaded }: { onUploaded: (m: MLModel) => void }) {
           />
         </label>
         <label className="space-y-1.5 sm:col-span-2">
-          <span className="text-xs font-medium text-muted-foreground">Deskripsi</span>
+          <span className="text-xs font-medium text-muted-foreground">{t("modelsPage.uploadDesc")}</span>
           <textarea
             rows={2}
             className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
@@ -194,10 +196,10 @@ function UploadModelCard({ onUploaded }: { onUploaded: (m: MLModel) => void }) {
       <button
         type="submit"
         disabled={!file || uploading}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50 cursor-pointer"
       >
         {uploading ? (
-          <><Loader2 className="h-4 w-4 animate-spin" /> Mengupload...</>
+          <><Loader2 className="h-4 w-4 animate-spin" /> {t("modelsPage.uploadingBtn")}</>
         ) : (
           <><Upload className="h-4 w-4" /> Upload Model</>
         )}
@@ -217,6 +219,7 @@ function ModelCard({
   onActivate: () => void;
   onDelete: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <div
       className={cn(
@@ -232,7 +235,7 @@ function ModelCard({
             <p className="font-semibold truncate">{model.name}</p>
             {model.isActive && (
               <span className="flex items-center gap-1 rounded-full bg-secondary/20 px-2 py-0.5 text-[10px] font-bold text-secondary">
-                <Zap className="h-3 w-3" /> AKTIF
+                <Zap className="h-3 w-3" /> {t("modelsPage.cardActive")}
               </span>
             )}
           </div>
@@ -242,7 +245,7 @@ function ModelCard({
         </div>
         {model.accuracy !== null && (
           <div className="text-right shrink-0">
-            <p className="text-[10px] text-muted-foreground">Akurasi</p>
+            <p className="text-[10px] text-muted-foreground">{t("modelsPage.cardAccuracy")}</p>
             <p className="text-lg font-black text-secondary">
               {model.accuracy?.toFixed(1)}%
             </p>
@@ -255,24 +258,24 @@ function ModelCard({
       )}
 
       <p className="mt-2 text-[10px] text-muted-foreground">
-        {model.originalFilename} · Upload: {new Date(model.uploadedAt).toLocaleDateString("id-ID")}
+        {model.originalFilename} · {t("modelsPage.cardUploadDate")} {new Date(model.uploadedAt).toLocaleDateString("id-ID")}
       </p>
 
       <div className="mt-4 flex gap-2">
         {!model.isActive && (
           <button
             onClick={onActivate}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-secondary/10 px-3 py-2 text-xs font-semibold text-secondary transition-colors hover:bg-secondary/20"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-secondary/10 px-3 py-2 text-xs font-semibold text-secondary transition-colors hover:bg-secondary/20 cursor-pointer"
           >
-            <Zap className="h-3.5 w-3.5" /> Aktifkan
+            <Zap className="h-3.5 w-3.5" /> {t("modelsPage.cardActivateBtn")}
           </button>
         )}
         <button
           onClick={onDelete}
-          className="flex items-center justify-center gap-1.5 rounded-lg bg-destructive/10 px-3 py-2 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/20"
+          className="flex items-center justify-center gap-1.5 rounded-lg bg-destructive/10 px-3 py-2 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/20 cursor-pointer"
         >
           <Trash2 className="h-3.5 w-3.5" />
-          {model.isActive ? "Hapus" : ""}
+          {model.isActive ? t("modelsPage.cardDeleteBtn") : ""}
         </button>
       </div>
     </div>
@@ -282,6 +285,7 @@ function ModelCard({
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function ModelsPage() {
+  const { t } = useI18n();
   const { user } = useAuth();
   const [models, setModels] = useState<MLModel[]>([]);
   const [loading, setLoading] = useState(true);
@@ -319,7 +323,7 @@ export default function ModelsPage() {
   };
 
   const handleDelete = async (id: number, name: string) => {
-    if (!confirm(`Hapus model "${name}"?`)) return;
+    if (!confirm(`` + t("modelsPage.deleteConfirm") + ` "${name}"?`)) return;
     setActionId(id);
     try {
       await deleteMLModel(id);
@@ -336,9 +340,9 @@ export default function ModelsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold">Kelola Model ML</h2>
+        <h2 className="text-xl font-bold">{t("modelsPage.title")}</h2>
         <p className="text-sm text-muted-foreground">
-          Upload model scikit-learn (.pkl / .joblib) dan aktifkan untuk digunakan dalam prediksi mahasiswa.
+          {t("modelsPage.desc")}
         </p>
       </div>
 
@@ -346,9 +350,9 @@ export default function ModelsPage() {
       <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm">
         <Info className="h-4 w-4 shrink-0 mt-0.5 text-primary" />
         <div>
-          <p className="font-semibold text-primary">Format model yang didukung</p>
+          <p className="font-semibold text-primary">{t("modelsPage.infoTitle")}</p>
           <p className="text-muted-foreground mt-0.5">
-            Model harus kompatibel dengan scikit-learn. Feature vector yang digunakan: age, is_married, is_employed, avg_ips, ips_drop, current_semester.
+            {t("modelsPage.infoDesc")}
           </p>
         </div>
       </div>
@@ -365,7 +369,7 @@ export default function ModelsPage() {
       {/* Model list */}
       <div>
         <p className="mb-3 text-sm font-semibold text-muted-foreground">
-          {models.length} model tersimpan
+          {models.length} {t("modelsPage.listCount")}
         </p>
         {loading ? (
           <div className="flex justify-center py-12">
@@ -374,7 +378,7 @@ export default function ModelsPage() {
         ) : models.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed py-16 text-muted-foreground">
             <BrainCircuit className="h-10 w-10 opacity-30" />
-            <p className="text-sm">Belum ada model yang diupload.</p>
+            <p className="text-sm">{t("modelsPage.listEmpty")}</p>
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">

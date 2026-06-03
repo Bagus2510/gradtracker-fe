@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { fetchAllPredictions } from "@/lib/api";
 import { useAuth } from "@/context/auth-context";
+import { useI18n } from "@/context/i18n-context";
 import type { PredictionLogEntry } from "@/types";
 import { cn } from "@/lib/utils";
 import { ScrollText, Loader2, BrainCircuit } from "lucide-react";
@@ -14,6 +15,7 @@ const RISK_BADGE = {
 } as const;
 
 export default function PredictionsPage() {
+  const { t } = useI18n();
   const { user } = useAuth();
   const [logs, setLogs] = useState<PredictionLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,12 +47,12 @@ export default function PredictionsPage() {
           <table className="w-full text-sm">
             <thead className="border-b bg-muted/50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Mahasiswa</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">{t("predictionsPage.colStudent")}</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Waktu</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Risk</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Prediksi</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Confidence</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Model</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">{t("predictionsPage.colModel")}</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -83,7 +85,7 @@ export default function PredictionsPage() {
                         log.prediction === "On-Time" ? "text-secondary" : "text-destructive",
                       )}
                     >
-                      {log.prediction === "On-Time" ? "✓ Tepat Waktu" : "⚠ Terlambat"}
+                      {log.prediction === "On-Time" ? `✓ ${t("predictionsPage.resultOnTime")}` : `⚠ ${t("predictionsPage.resultLate")}`}
                     </span>
                   </td>
                   <td className="px-4 py-3 font-mono text-xs">

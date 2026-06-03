@@ -10,11 +10,13 @@ import {
   Lock,
 } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
+import { useI18n } from "@/context/i18n-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
+  const { t } = useI18n();
   const { user, login } = useAuth();
   const router = useRouter();
 
@@ -50,7 +52,7 @@ export default function LoginPage() {
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <Lock className="h-6 w-6" />
           </div>
-          <h1 className="text-2xl font-bold">Admin Login</h1>
+          <h1 className="text-2xl font-bold">{t("login.heroHeading")}</h1>
           <p className="text-sm text-muted-foreground">
             Sistem GradTracker
           </p>
@@ -58,10 +60,10 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username">{t("login.username")}</Label>
             <Input
               id="username"
-              placeholder="Username"
+              placeholder={t("login.username")}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
@@ -71,7 +73,7 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("login.password")}</Label>
             <div className="relative">
               <Input
                 id="password"
@@ -85,7 +87,7 @@ export default function LoginPage() {
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-3 flex items-center text-muted-foreground transition-colors hover:text-foreground"
+                className="absolute inset-y-0 right-3 flex items-center text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
                 onClick={() => setShowPassword((v) => !v)}
                 tabIndex={-1}
               >
@@ -110,7 +112,7 @@ export default function LoginPage() {
             disabled={isLoading}
           >
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isLoading ? "Memproses..." : "Masuk ke Dashboard"}
+            {isLoading ? t("login.processing") : t("login.loginButton")}
           </Button>
         </form>
       </div>

@@ -83,7 +83,7 @@ export function AppHeader() {
         {/* ── Language Toggle ── */}
         <button
           onClick={() => setLang(lang === "id" ? "en" : "id")}
-          className="flex items-center gap-1.5 rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground text-xs font-semibold"
+          className="flex items-center gap-1.5 rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground text-xs font-semibold cursor-pointer"
           title="Toggle Language"
         >
           <Globe className="h-4 w-4" />
@@ -94,7 +94,7 @@ export function AppHeader() {
         {mounted && (
           <button
             onClick={toggle}
-            className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
             title={isDark ? "Switch to light mode" : "Switch to dark mode"}
           >
             {isDark ? (

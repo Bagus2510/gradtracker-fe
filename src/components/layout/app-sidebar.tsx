@@ -112,7 +112,7 @@ export function AppSidebar() {
           </div>
           <button
             onClick={logout}
-            className="rounded-lg p-1.5 text-sidebar-foreground/40 transition-colors hover:bg-destructive hover:text-destructive"
+            className="rounded-lg p-1.5 text-sidebar-foreground/40 transition-colors hover:bg-destructive hover:text-destructive cursor-pointer"
             title="Logout"
           >
             <LogOut className="h-4 w-4" />

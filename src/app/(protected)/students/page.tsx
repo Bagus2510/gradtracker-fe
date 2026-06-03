@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchAllStudents } from "@/lib/api";
+import { useI18n } from "@/context/i18n-context";
 import type { StudentProfile } from "@/types";
 import {
   Users,
@@ -12,6 +13,7 @@ import {
 } from "lucide-react";
 
 export default function AdminStudentsPage() {
+  const { t } = useI18n();
   const [students, setStudents] = useState<StudentProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
@@ -34,9 +36,9 @@ export default function AdminStudentsPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setSelected(null)}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground cursor-pointer"
           >
-            <ArrowLeft className="h-4 w-4" /> Kembali
+            <ArrowLeft className="h-4 w-4" /> {t("studentsPage.back")}
           </button>
           <ChevronRight className="h-3 w-3 text-muted-foreground" />
           <span className="text-sm font-semibold">{selected.name}</span>
@@ -79,9 +81,9 @@ export default function AdminStudentsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold">Daftar Mahasiswa</h2>
+        <h2 className="text-xl font-bold">{t("studentsPage.title")}</h2>
         <p className="text-sm text-muted-foreground">
-          {students.length} mahasiswa telah menggunakan layanan prediksi.
+          {students.length} {t("studentsPage.desc")}
         </p>
       </div>
 
@@ -89,7 +91,7 @@ export default function AdminStudentsPage() {
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
           className="w-full rounded-lg border bg-background py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-          placeholder="Cari nama atau NIM..."
+          placeholder={t("studentsPage.searchPh")}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -104,8 +106,8 @@ export default function AdminStudentsPage() {
           <Users className="h-8 w-8 opacity-30" />
           <p className="text-sm">
             {students.length === 0
-              ? "Belum ada mahasiswa yang menggunakan sistem."
-              : "Tidak ada hasil untuk pencarian ini."}
+              ? t("studentsPage.empty")
+              : t("studentsPage.notFound")}
           </p>
         </div>
       ) : (
@@ -114,7 +116,7 @@ export default function AdminStudentsPage() {
             <button
               key={s.id}
               onClick={() => setSelected(s)}
-              className="group w-full rounded-xl border bg-card p-4 text-left transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg"
+              className="group w-full rounded-xl border bg-card p-4 text-left transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg cursor-pointer"
             >
               <div className="flex items-center justify-between">
                 <div>

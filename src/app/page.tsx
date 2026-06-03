@@ -27,8 +27,10 @@ import {
   Calendar,
   Moon,
   Sun,
+  Globe,
 } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
+import { useI18n } from "@/context/i18n-context";
 import {
   LineChart,
   Line,
@@ -74,6 +76,7 @@ const RISK_CFG = {
 
 // ── Result component ─────────────────────────────────────────────────────────
 function PredictionResultCard({ result }: { result: PredictionResult }) {
+  const { t } = useI18n();
   const cfg = RISK_CFG[result.riskLabel];
   const RiskIcon = cfg.icon;
 
@@ -114,7 +117,7 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
             <div>
               <p className="text-sm text-muted-foreground">Prediksi Kelulusan</p>
               <p className={cn("text-2xl font-black", cfg.text)}>
-                {result.prediction === "On-Time" ? "✅ Tepat Waktu" : "⚠️ Berisiko Terlambat"}
+                {result.prediction === "On-Time" ? `✅ ${t("publicPage.resultOnTime")}` : `⚠️ ${t("publicPage.resultLate")}`}
               </p>
             </div>
 
@@ -236,12 +239,13 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
 
 // ── Boot Sequence (Loading Screen + Guide) ──────────────────────────────────
 function BootSequence({ onComplete }: { onComplete: () => void }) {
+  const { t } = useI18n();
   const [progress, setProgress] = useState(0);
   const [step, setStep] = useState(0);
 
   const steps = [
     { text: "Memuat Modul Prediksi AI...", icon: Cpu },
-    { text: "Panduan 1: Lengkapi Data Diri & Fakultas", icon: User },
+    { text: `Panduan 1: Lengkapi ${t("publicPage.identityTitle")} & Fakultas`, icon: User },
     { text: "Panduan 2: Masukkan Riwayat Nilai IPS (0.00-4.00)", icon: BookOpen },
     { text: "Panduan 3: Sistem Akan Memprediksi Peluang Kelulusan", icon: BrainCircuit },
   ];
@@ -311,6 +315,7 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
 
 // ── Root Page ─────────────────────────────────────────────────────────────────
 export default function PublicPredictionPage() {
+  const { t, lang, setLang } = useI18n();
   const router = useRouter();
   const { isDark, mounted, toggle: toggleTheme } = useTheme();
   const [booting, setBooting] = useState(true);
@@ -385,13 +390,23 @@ export default function PublicPredictionPage() {
         </div>
         
         {mounted && (
-          <button
-            onClick={toggleTheme}
-            className="flex h-9 w-9 items-center justify-center rounded-full border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground shadow-sm"
-            title="Toggle Theme"
-          >
-            {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setLang(lang === "id" ? "en" : "id")}
+              className="flex items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground shadow-sm cursor-pointer"
+              title="Toggle Language"
+            >
+              <Globe className="h-4 w-4" />
+              {lang.toUpperCase()}
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="flex h-9 w-9 items-center justify-center rounded-full border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground shadow-sm cursor-pointer"
+              title="Toggle Theme"
+            >
+              {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+            </button>
+          </div>
         )}
       </header>
 
@@ -405,10 +420,10 @@ export default function PublicPredictionPage() {
             Prediksi Berbasis Machine Learning
           </div>
           <h1 className="text-4xl font-black tracking-tight sm:text-5xl text-foreground">
-            Cek Risiko Kelulusanmu
+            {t("publicPage.heroTitle")}
           </h1>
           <p className="mx-auto max-w-xl text-muted-foreground sm:text-lg">
-            Sistem cerdas GradTracker membantu mendeteksi potensi keterlambatan lulus sejak dini. Masukkan datamu dan dapatkan hasilnya seketika.
+            {t("publicPage.heroDesc")}
           </p>
         </div>
 
@@ -427,38 +442,38 @@ export default function PublicPredictionPage() {
             </h3>
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="space-y-1.5">
-                <span className="text-xs font-medium text-muted-foreground">NIM Lengkap</span>
+                <span className="text-xs font-medium text-muted-foreground">{t("publicPage.identityNim")}</span>
                 <input
                   className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
                   value={form.nim}
-                  placeholder="Contoh: 10119001"
+                  placeholder={t("publicPage.identityNimPh")}
                   onChange={(e) => setForm((f) => ({ ...f, nim: e.target.value }))}
                   required
                 />
               </label>
               <label className="space-y-1.5">
-                <span className="text-xs font-medium text-muted-foreground">Nama Lengkap</span>
+                <span className="text-xs font-medium text-muted-foreground">{t("publicPage.identityName")}</span>
                 <input
                   className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
                   value={form.name}
-                  placeholder="Contoh: Budi Santoso"
+                  placeholder={t("publicPage.identityNamePh")}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                   required
                 />
               </label>
               <label className="space-y-1.5">
-                <span className="text-xs font-medium text-muted-foreground">Jenis Kelamin</span>
+                <span className="text-xs font-medium text-muted-foreground">{t("publicPage.identityGender")}</span>
                 <select
-                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
                   value={form.gender}
                   onChange={(e) => setForm((f) => ({ ...f, gender: e.target.value as "L" | "P" }))}
                 >
-                  <option value="L">Laki-laki (L)</option>
-                  <option value="P">Perempuan (P)</option>
+                  <option value="L">{t("publicPage.identityGenderM")}</option>
+                  <option value="P">{t("publicPage.identityGenderF")}</option>
                 </select>
               </label>
               <label className="space-y-1.5">
-                <span className="text-xs font-medium text-muted-foreground">Usia</span>
+                <span className="text-xs font-medium text-muted-foreground">{t("publicPage.identityAge")}</span>
                 <input
                   type="number"
                   min={17}
@@ -470,28 +485,28 @@ export default function PublicPredictionPage() {
               </label>
               <label className="space-y-1.5">
                 <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
-                  <Heart className="h-3 w-3" /> Status Pernikahan
+                  <Heart className="h-3 w-3" /> {t("publicPage.identityMarital")}
                 </span>
                 <select
-                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
                   value={form.marital_status}
                   onChange={(e) => setForm((f) => ({ ...f, marital_status: e.target.value as "Single" | "Married" }))}
                 >
-                  <option value="Single">Belum Menikah</option>
-                  <option value="Married">Menikah</option>
+                  <option value="Single">{t("publicPage.identityMaritalSingle")}</option>
+                  <option value="Married">{t("publicPage.identityMaritalMarried")}</option>
                 </select>
               </label>
               <label className="space-y-1.5">
                 <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
-                  <Briefcase className="h-3 w-3" /> Status Pekerjaan
+                  <Briefcase className="h-3 w-3" /> {t("publicPage.identityEmp")}
                 </span>
                 <select
-                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
                   value={form.employment_status}
                   onChange={(e) => setForm((f) => ({ ...f, employment_status: e.target.value as "Employed" | "Unemployed" }))}
                 >
-                  <option value="Unemployed">Tidak Bekerja</option>
-                  <option value="Employed">Bekerja</option>
+                  <option value="Unemployed">{t("publicPage.identityEmpNo")}</option>
+                  <option value="Employed">{t("publicPage.identityEmpYes")}</option>
                 </select>
               </label>
             </div>
@@ -500,16 +515,16 @@ export default function PublicPredictionPage() {
           {/* Academic */}
           <div className="rounded-2xl border bg-card p-5 sm:p-6 shadow-sm space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
             <h3 className="flex items-center justify-between gap-2 text-sm font-bold text-foreground uppercase tracking-wider">
-              <span className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-primary" /> Data Akademik</span>
+              <span className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-primary" /> {t("publicPage.academicTitle")}</span>
               <span className="rounded-full bg-secondary/20 px-3 py-1 text-xs font-semibold text-secondary lowercase tracking-normal">
                 ipk {ipk}
               </span>
             </h3>
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="space-y-1.5">
-                <span className="text-xs font-medium text-muted-foreground">Fakultas</span>
+                <span className="text-xs font-medium text-muted-foreground">{t("publicPage.academicFaculty")}</span>
                 <select
-                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
                   value={faculty}
                   onChange={(e) => {
                     setFaculty(e.target.value);
@@ -517,26 +532,26 @@ export default function PublicPredictionPage() {
                   }}
                   required
                 >
-                  <option value="" disabled>Pilih Fakultas</option>
+                  <option value="" disabled>{t("publicPage.academicFacultyPh")}</option>
                   {Object.keys(FACULTIES).map((f) => <option key={f} value={f}>{f}</option>)}
                 </select>
               </label>
               <label className="space-y-1.5">
-                <span className="text-xs font-medium text-muted-foreground">Program Studi</span>
+                <span className="text-xs font-medium text-muted-foreground">{t("publicPage.academicProgram")}</span>
                 <select
-                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
                   value={form.program}
                   onChange={(e) => setForm((f) => ({ ...f, program: e.target.value }))}
                   disabled={!faculty}
                   required
                 >
-                  <option value="" disabled>Pilih Program Studi</option>
+                  <option value="" disabled>{t("publicPage.academicProgramPh")}</option>
                   {faculty && FACULTIES[faculty].map((p) => <option key={p} value={p}>{p}</option>)}
                 </select>
               </label>
               <label className="space-y-1.5">
                 <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
-                  <Calendar className="h-3 w-3" /> Tahun Masuk
+                  <Calendar className="h-3 w-3" /> {t("publicPage.academicYear")}
                 </span>
                 <input
                   type="number"
@@ -548,14 +563,14 @@ export default function PublicPredictionPage() {
                 />
               </label>
               <label className="space-y-1.5">
-                <span className="text-xs font-medium text-muted-foreground">Semester Sekarang</span>
+                <span className="text-xs font-medium text-muted-foreground">{t("publicPage.academicSemester")}</span>
                 <select
-                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
                   value={form.current_semester}
                   onChange={(e) => setForm((f) => ({ ...f, current_semester: parseInt(e.target.value) }))}
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((s) => (
-                    <option key={s} value={s}>Semester {s}</option>
+                    <option key={s} value={s}>{t("publicPage.academicSemesterVal")} {s}</option>
                   ))}
                 </select>
               </label>
@@ -563,7 +578,7 @@ export default function PublicPredictionPage() {
 
             <div className="space-y-2 mt-4 pt-4 border-t">
               <p className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
-                <TrendingUp className="h-3 w-3" /> IPS per Semester (0.00 – 4.00)
+                <TrendingUp className="h-3 w-3" /> {t("publicPage.academicIps")}
               </p>
               <div className="grid grid-cols-4 gap-2 sm:grid-cols-8">
                 {form.ips.map((val, idx) => (
@@ -596,7 +611,7 @@ export default function PublicPredictionPage() {
           <button
             type="submit"
             disabled={predicting}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-4 text-base font-bold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-60 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-both"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-4 text-base font-bold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-60 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-both cursor-pointer"
           >
             {predicting ? (
               <>
