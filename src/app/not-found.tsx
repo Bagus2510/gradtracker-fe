@@ -39,16 +39,15 @@ export default function NotFound() {
 
         {/* CTAs */}
         <div className="flex gap-3">
-          <Link href="/" className={buttonVariants()}>
+          <Link href="/dashboard" className={buttonVariants()}>
             <Home className="mr-1.5 h-4 w-4" />
             Ke Dashboard
           </Link>
           <Link
-            href="/login"
+            href="/"
             className={buttonVariants({ variant: "outline" })}
           >
-            <LogIn className="mr-1.5 h-4 w-4" />
-            Login
+            Halaman Utama
           </Link>
         </div>
 

@@ -6,9 +6,11 @@ import {
   GraduationCap,
   LayoutDashboard,
   BarChart3,
-  UserCircle,
   Cpu,
   LogOut,
+  BrainCircuit,
+  Users,
+  ScrollText,
 } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { useI18n } from "@/context/i18n-context";
@@ -24,41 +26,22 @@ import {
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
+const ADMIN_NAV = [
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/students", label: "Daftar Mahasiswa", icon: Users },
+  { href: "/analytics", label: "Analitik", icon: BarChart3 },
+  { href: "/models", label: "Kelola Model ML", icon: BrainCircuit },
+  { href: "/predictions", label: "Log Prediksi", icon: ScrollText },
+];
+
+
+
 export function AppSidebar() {
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const { t } = useI18n();
 
-  const navItems = [
-    {
-      href: "/dashboard",
-      label: t("sidebar.dashboard"),
-      icon: LayoutDashboard,
-      adminOnly: true,
-    },
-    {
-      href: "/analytics",
-      label: t("sidebar.analytics"),
-      icon: BarChart3,
-      adminOnly: true,
-    },
-    {
-      href: "/profile",
-      label: t("sidebar.profile"),
-      icon: UserCircle,
-      adminOnly: false,
-    },
-    {
-      href: "/simulation",
-      label: t("sidebar.simulation"),
-      icon: Cpu,
-      adminOnly: false,
-    },
-  ];
-
-  const visibleItems = navItems.filter(
-    (item) => !item.adminOnly || user?.role === "admin",
-  );
+  const navItems = ADMIN_NAV;
 
   const initials =
     user?.name
@@ -81,7 +64,7 @@ export function AppSidebar() {
               GradTracker
             </p>
             <p className="text-xs font-medium capitalize text-sidebar-foreground/60">
-              {user?.role} panel
+              Admin Panel
             </p>
           </div>
         </div>
@@ -92,8 +75,8 @@ export function AppSidebar() {
       {/* ── Navigation ── */}
       <SidebarContent className="px-2 py-3">
         <SidebarMenu className="flex flex-col gap-2">
-          {visibleItems.map((item) => {
-            const isActive = pathname === item.href;
+          {navItems.map((item) => {
+            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
@@ -124,7 +107,7 @@ export function AppSidebar() {
               {user?.name}
             </p>
             <p className="truncate text-[10px] capitalize text-sidebar-foreground/50">
-              {user?.role}
+              {user?.nim ?? user?.role}
             </p>
           </div>
           <button

@@ -6,8 +6,6 @@ import { useAuth } from "@/context/auth-context";
 import { useI18n } from "@/context/i18n-context";
 import { KPICards } from "@/components/dashboard/kpi-cards";
 import { IPSTrendChart } from "@/components/dashboard/ips-trend-chart";
-import { InsightsPanel } from "@/components/dashboard/insights-panel";
-import { HighRiskPreview } from "@/components/dashboard/high-risk-preview";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -31,16 +29,12 @@ export default function DashboardPage() {
       {/* Row 1: KPI Cards */}
       <KPICards />
 
-      {/* Row 2: IPS Trend + High-Risk Preview */}
+      {/* Row 2: IPS Trend */}
       <div className="grid gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-3">
           <IPSTrendChart />
         </div>
-        <HighRiskPreview />
       </div>
-
-      {/* Row 3: Key Analytical Findings */}
-      <InsightsPanel />
     </div>
   );
 }

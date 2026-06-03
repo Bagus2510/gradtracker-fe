@@ -6,7 +6,6 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/context/auth-context";
 import { useTheme } from "@/hooks/use-theme";
 import { useI18n } from "@/context/i18n-context";
-import { mockStudents } from "@/lib/mock-data";
 import {
   LayoutDashboard,
   BarChart3,
@@ -53,10 +52,6 @@ const ROLE_BADGE: Record<string, { label: string; classes: string }> = {
   },
 };
 
-const topHighRisk = mockStudents
-  .filter((s) => s.riskLabel === "High")
-  .sort((a, b) => b.riskScore - a.riskScore)
-  .slice(0, 5);
 
 export function AppHeader() {
   const pathname = usePathname();

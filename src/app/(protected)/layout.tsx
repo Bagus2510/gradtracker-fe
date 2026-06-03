@@ -16,8 +16,12 @@ export default function ProtectedLayout({
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.replace("/login");
+    if (!isLoading) {
+      if (!user) {
+        router.replace("/login");
+      } else if (user.role !== "admin") {
+        router.replace("/");
+      }
     }
   }, [user, isLoading, router]);
 

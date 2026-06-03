@@ -7,31 +7,66 @@ export interface User {
   nim?: string;
 }
 
-export interface Student {
-  id: string;
+// ── Student Profile (self-reported) ──────────────────────────────────────────
+
+export interface StudentProfile {
+  id: number;
+  user_id: string;
   nim: string;
   name: string;
   gender: "L" | "P";
   age: number;
   maritalStatus: "Single" | "Married";
   employmentStatus: "Employed" | "Unemployed";
-  /** IPS per semester, index 0 = Semester 1 */
-  ips: number[];
-  ipk: number;
-  riskScore: number; // 0–100
-  riskLabel: "Low" | "Medium" | "High";
-  graduationStatus: "On-Time" | "Late";
-  /** True when IPS drop in Sem 7-8 exceeds the 0.5-point threshold */
-  hasIPSDegradation: boolean;
   program: string;
   entryYear: number;
+  ips: number[];
+  currentSemester: number;
+  ipk: number;
+  createdAt: string;
+  updatedAt: string;
 }
+
+export interface StudentProfileInput {
+  name: string;
+  gender: "L" | "P";
+  age: number;
+  marital_status: "Single" | "Married";
+  employment_status: "Employed" | "Unemployed";
+  program: string;
+  entry_year: number;
+  ips: number[];
+  current_semester: number;
+}
+
+export interface PublicPredictInput extends StudentProfileInput {
+  nim: string;
+}
+
+// ── ML Model ─────────────────────────────────────────────────────────────────
+
+export interface MLModel {
+  id: number;
+  name: string;
+  originalFilename: string;
+  algorithm: string;
+  version: string;
+  accuracy: number | null;
+  description: string | null;
+  featureNames: string[] | null;
+  isActive: boolean;
+  uploadedBy: string;
+  uploadedAt: string;
+}
+
+// ── Dashboard ─────────────────────────────────────────────────────────────────
 
 export interface KPISummary {
   totalStudents: number;
   predictedOnTime: number;
   predictedLate: number;
   highRiskCount: number;
+  todaySubmissions: number;
 }
 
 export interface IPSTrendPoint {
@@ -45,12 +80,14 @@ export interface PopulationDataPoint {
   late: number;
 }
 
+// ── Prediction ────────────────────────────────────────────────────────────────
+
 export interface PredictionInput {
   age: number;
-  maritalStatus: "Single" | "Married";
-  employmentStatus: "Employed" | "Unemployed";
-  ips: (number | "")[];
-  currentSemester: number;
+  marital_status: "Single" | "Married";
+  employment_status: "Employed" | "Unemployed";
+  ips: number[];
+  current_semester: number;
 }
 
 export interface PredictionResult {
@@ -59,4 +96,21 @@ export interface PredictionResult {
   prediction: "On-Time" | "Late";
   confidence: number;
   keyFactors: string[];
+  recommendations: string[];
+  modelUsed: string;
+  ipsTrend: number[] | null;
+  avgIPS: number | null;
+  ipsDrop: number | null;
+}
+
+export interface PredictionLogEntry {
+  id: number;
+  createdAt: string;
+  studentNim: string | null;
+  studentName: string | null;
+  riskScore: number;
+  riskLabel: string;
+  prediction: string;
+  confidence: number;
+  modelName: string | null;
 }

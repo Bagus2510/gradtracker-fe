@@ -65,6 +65,58 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // ── Token Refresh (Sliding Session) ─────────────────────────────────────────
+  useEffect(() => {
+    if (!user || !API_BASE) return;
+
+    let lastActivityTime = Date.now();
+    let lastRefreshTime = Date.now();
+
+    const updateActivity = () => {
+      lastActivityTime = Date.now();
+    };
+
+    window.addEventListener("mousemove", updateActivity, { passive: true });
+    window.addEventListener("keydown", updateActivity, { passive: true });
+
+    // Check every 2 minutes
+    const interval = setInterval(async () => {
+      const now = Date.now();
+      // If user was active since the last refresh (or within last 5 mins)
+      if (lastActivityTime > lastRefreshTime) {
+        try {
+          const token = localStorage.getItem(TOKEN_KEY);
+          if (!token) return;
+
+          const res = await fetch(`${API_BASE}/api/auth/refresh`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          
+          if (res.ok) {
+            const data = await res.json();
+            localStorage.setItem(TOKEN_KEY, data.access_token);
+            lastRefreshTime = now;
+          } else if (res.status === 401) {
+            // Token expired and unable to refresh, log out
+            logout();
+          }
+        } catch (err) {
+          console.error("Failed to refresh token", err);
+        }
+      }
+    }, 2 * 60 * 1000); // 2 minutes
+
+    return () => {
+      window.removeEventListener("mousemove", updateActivity);
+      window.removeEventListener("keydown", updateActivity);
+      clearInterval(interval);
+    };
+  }, [user]);
+
   const login = async (username: string, password: string) => {
     // ── Real API login ──────────────────────────────────────────────────────
     if (API_BASE) {

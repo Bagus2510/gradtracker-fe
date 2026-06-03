@@ -1,210 +1,166 @@
 /**
- * GradTracker API Service Layer
- *
- * Saat ini menggunakan mock data dengan simulated delay.
- * Untuk koneksi ke FastAPI backend, set environment variable:
- * NEXT_PUBLIC_API_URL=http://localhost:8000
- * lalu hapus blok `if (USE_MOCK)` pada setiap fungsi.
+ * GradTracker API v2 Service Layer
+ * All endpoints are authenticated via Bearer JWT token.
+ * Token is stored in localStorage under "gradtracker_token".
+ * When NEXT_PUBLIC_API_URL is not set, falls back to mock data.
  */
 
 import type {
-  Student,
   KPISummary,
   IPSTrendPoint,
   PopulationDataPoint,
   PredictionInput,
   PredictionResult,
+  StudentProfile,
+  StudentProfileInput,
+  PublicPredictInput,
+  MLModel,
+  PredictionLogEntry,
 } from "@/types";
-import {
-  mockStudents,
-  kpiSummary,
-  globalIPSTrend,
-  ageDistribution,
-  employmentDistribution,
-} from "./mock-data";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-const USE_MOCK = !process.env.NEXT_PUBLIC_API_URL;
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
+const TOKEN_KEY = "gradtracker_token";
 
-const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+// ── Auth helpers ──────────────────────────────────────────────────────────────
 
-// ── Dashboard ────────────────────────────────────────────────────────────────
+function getToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+function authHeaders(): HeadersInit {
+  const token = getToken();
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
+async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  if (!API_BASE) throw new Error("API_BASE not configured");
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...init,
+    headers: { ...authHeaders(), ...(init?.headers ?? {}) },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail ?? `HTTP ${res.status}`);
+  }
+  return res.json() as Promise<T>;
+}
+
+
+
+export async function predictPublicRisk(
+  input: PublicPredictInput,
+): Promise<PredictionResult> {
+  return apiFetch<PredictionResult>("/api/public/predict", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+// ── Dashboard (Admin) ─────────────────────────────────────────────────────────
 
 export async function fetchKPI(): Promise<KPISummary> {
-  if (USE_MOCK) {
-    await delay(600);
-    return kpiSummary;
+  if (!API_BASE) {
+    return {
+      totalStudents: 0,
+      predictedOnTime: 0,
+      predictedLate: 0,
+      highRiskCount: 0,
+      todaySubmissions: 0,
+    };
   }
-  const res = await fetch(`${API_BASE}/api/dashboard/kpi`);
-  if (!res.ok) throw new Error("Failed to fetch KPI");
-  return res.json();
+  return apiFetch<KPISummary>("/api/dashboard/kpi");
 }
 
 export async function fetchIPSTrend(): Promise<IPSTrendPoint[]> {
-  if (USE_MOCK) {
-    await delay(500);
-    return globalIPSTrend;
-  }
-  const res = await fetch(`${API_BASE}/api/dashboard/ips-trend`);
-  if (!res.ok) throw new Error("Failed to fetch IPS trend");
-  return res.json();
+  if (!API_BASE) return [];
+  return apiFetch<IPSTrendPoint[]>("/api/dashboard/ips-trend");
 }
 
-// ── Students ─────────────────────────────────────────────────────────────────
-
-export async function fetchStudents(params?: {
-  riskLabel?: Student["riskLabel"];
-  program?: string;
-}): Promise<Student[]> {
-  if (USE_MOCK) {
-    await delay(750);
-    let result = mockStudents;
-    if (params?.riskLabel)
-      result = result.filter((s) => s.riskLabel === params.riskLabel);
-    if (params?.program)
-      result = result.filter((s) => s.program === params.program);
-    return result;
-  }
-  const url = new URL(`${API_BASE}/api/students`);
-  if (params?.riskLabel) url.searchParams.set("risk_label", params.riskLabel);
-  if (params?.program) url.searchParams.set("program", params.program);
-  const res = await fetch(url.toString());
-  if (!res.ok) throw new Error("Failed to fetch students");
-  return res.json();
-}
-
-export async function fetchStudent(nim: string): Promise<Student | null> {
-  if (USE_MOCK) {
-    await delay(350);
-    return mockStudents.find((s) => s.nim === nim) ?? null;
-  }
-  const res = await fetch(`${API_BASE}/api/students/${nim}`);
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`Failed to fetch student ${nim}`);
-  return res.json();
-}
-
-// ── Analytics ────────────────────────────────────────────────────────────────
+// ── Analytics (Admin) ─────────────────────────────────────────────────────────
 
 export async function fetchAgeDistribution(): Promise<PopulationDataPoint[]> {
-  if (USE_MOCK) {
-    await delay(400);
-    return ageDistribution;
-  }
-  const res = await fetch(`${API_BASE}/api/analytics/age-distribution`);
-  if (!res.ok) throw new Error("Failed to fetch age distribution");
-  return res.json();
+  if (!API_BASE) return [];
+  return apiFetch<PopulationDataPoint[]>("/api/analytics/age-distribution");
 }
 
 export async function fetchEmploymentDistribution(): Promise<
   PopulationDataPoint[]
 > {
-  if (USE_MOCK) {
-    await delay(400);
-    return employmentDistribution;
-  }
-  const res = await fetch(`${API_BASE}/api/analytics/employment-distribution`);
-  if (!res.ok) throw new Error("Failed to fetch employment distribution");
+  if (!API_BASE) return [];
+  return apiFetch<PopulationDataPoint[]>(
+    "/api/analytics/employment-distribution",
+  );
+}
+
+// ── Admin Students ────────────────────────────────────────────────────────────
+
+export async function fetchAllStudents(params?: {
+  program?: string;
+}): Promise<StudentProfile[]> {
+  if (!API_BASE) return [];
+  const url = new URL(`${API_BASE}/api/admin/students`);
+  if (params?.program) url.searchParams.set("program", params.program);
+  const res = await fetch(url.toString(), { headers: authHeaders() });
+  if (!res.ok) throw new Error("Failed to fetch students");
   return res.json();
 }
 
-// ── ML Prediction ────────────────────────────────────────────────────────────
-
-export async function predict(
-  input: PredictionInput,
-): Promise<PredictionResult> {
-  if (!USE_MOCK) {
-    try {
-      const res = await fetch(`${API_BASE}/api/predict`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          age: input.age,
-          marital_status: input.maritalStatus,
-          employment_status: input.employmentStatus,
-          ips: (input.ips as number[])
-            .slice(0, input.currentSemester)
-            .filter((v) => v > 0),
-          current_semester: input.currentSemester,
-        }),
-      });
-      if (res.ok) return res.json();
-    } catch {
-      // Fall through to mock predictor
-    }
+export async function fetchStudentByNim(
+  nim: string,
+): Promise<StudentProfile | null> {
+  if (!API_BASE) return null;
+  try {
+    return await apiFetch<StudentProfile>(`/api/admin/students/${nim}`);
+  } catch {
+    return null;
   }
-
-  // Mock predictor — mirrors backend logic
-  await delay(900);
-  return mockPredict(input);
 }
 
-function mockPredict(input: PredictionInput): PredictionResult {
-  const validIPS = (input.ips as number[])
-    .slice(0, input.currentSemester)
-    .filter((v) => v > 0);
+export async function fetchAllPredictions(
+  limit = 50,
+): Promise<PredictionLogEntry[]> {
+  if (!API_BASE) return [];
+  return apiFetch<PredictionLogEntry[]>(
+    `/api/admin/predictions?limit=${limit}`,
+  );
+}
 
-  if (validIPS.length === 0) {
-    return {
-      riskScore: 50,
-      riskLabel: "Medium",
-      prediction: "Late",
-      confidence: 0.5,
-      keyFactors: [],
-    };
+// ── Admin ML Models ────────────────────────────────────────────────────────────
+
+export async function fetchMLModels(): Promise<MLModel[]> {
+  if (!API_BASE) return [];
+  return apiFetch<MLModel[]>("/api/admin/models");
+}
+
+export async function uploadMLModel(
+  formData: FormData,
+): Promise<MLModel> {
+  if (!API_BASE) throw new Error("API not configured");
+  const token = getToken();
+  const res = await fetch(`${API_BASE}/api/admin/models`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: formData, // multipart/form-data — don't set Content-Type manually
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail ?? `Upload failed: HTTP ${res.status}`);
   }
+  return res.json();
+}
 
-  let score = 0;
-  const factors: string[] = [];
+export async function activateMLModel(id: number): Promise<MLModel> {
+  return apiFetch<MLModel>(`/api/admin/models/${id}/activate`, {
+    method: "PUT",
+  });
+}
 
-  if (input.employmentStatus === "Employed") {
-    score += 35;
-    factors.push("Status bekerja meningkatkan risiko signifikan");
-  }
-  if (input.maritalStatus === "Married") {
-    score += 15;
-    factors.push("Status menikah berkorelasi dengan beban non-akademik");
-  }
-  if (input.age >= 25) {
-    score += 20;
-    factors.push("Usia di atas rata-rata angkatan");
-  } else if (input.age >= 23) {
-    score += 10;
-  }
-
-  if (validIPS.length >= 2) {
-    const drop = validIPS[validIPS.length - 2] - validIPS[validIPS.length - 1];
-    if (drop > 0.5) {
-      score += 25;
-      factors.push(
-        `Penurunan IPS ${drop.toFixed(2)} poin pada semester terakhir`,
-      );
-    } else if (drop > 0.3) {
-      score += 10;
-    }
-  }
-
-  const avgIPS = validIPS.reduce((a, b) => a + b, 0) / validIPS.length;
-  if (avgIPS < 2.5) {
-    score += 15;
-    factors.push("Rata-rata IPS di bawah 2.50");
-  } else if (avgIPS < 2.8) {
-    score += 5;
-  }
-
-  score = Math.min(score, 99);
-  const riskLabel = score >= 65 ? "High" : score >= 40 ? "Medium" : "Low";
-  const prediction = score >= 50 ? "Late" : "On-Time";
-  const confidence = parseFloat((0.62 + (score / 100) * 0.28).toFixed(3));
-
-  if (factors.length === 0)
-    factors.push("Performa akademik stabil dan konsisten");
-
-  return {
-    riskScore: score,
-    riskLabel,
-    prediction,
-    confidence,
-    keyFactors: factors,
-  };
+export async function deleteMLModel(id: number): Promise<void> {
+  await apiFetch<{ message: string }>(`/api/admin/models/${id}`, {
+    method: "DELETE",
+  });
 }
