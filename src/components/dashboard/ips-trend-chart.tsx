@@ -68,10 +68,9 @@ export function IPSTrendChart() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tren Rata-Rata {t("dashboard.trendY")} Kampus</CardTitle>
+        <CardTitle>{t("dashboard.trendChartTitle")}</CardTitle>
         <CardDescription>
-          Rata-rata {t("dashboard.trendY")} per semester seluruh mahasiswa — perhatikan penurunan
-          tajam di {t("dashboard.trendX")} 7–8
+          {t("dashboard.trendChartDesc")}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -113,7 +112,7 @@ export function IPSTrendChart() {
                 stroke="#ff5f00"
                 strokeDasharray="4 2"
                 label={{
-                  value: `⚠ Degradasi ${t("dashboard.trendY")}`,
+                  value: t("dashboard.trendDegradation"),
                   position: "insideTopRight",
                   fontSize: 10,
                   fill: "#ff5f00",

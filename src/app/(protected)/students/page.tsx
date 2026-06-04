@@ -46,15 +46,15 @@ export default function AdminStudentsPage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           {[
-            { label: "NIM", value: selected.nim },
-            { label: "Program Studi", value: selected.program },
-            { label: "Usia", value: `${selected.age} tahun` },
-            { label: "Jenis Kelamin", value: selected.gender === "L" ? "Laki-laki" : "Perempuan" },
-            { label: "Status Pernikahan", value: selected.maritalStatus },
-            { label: "Status Kerja", value: selected.employmentStatus },
-            { label: "Tahun Masuk", value: selected.entryYear },
-            { label: "Semester Aktif", value: `Semester ${selected.currentSemester}` },
-            { label: "IPK", value: selected.ipk.toFixed(2) },
+            { label: t("studentsPage.detailNim"), value: selected.nim },
+            { label: t("studentsPage.detailProgram"), value: selected.program },
+            { label: t("studentsPage.detailAge"), value: `${selected.age} ${t("studentsPage.detailAgeUnit")}` },
+            { label: t("studentsPage.detailGender"), value: selected.gender === "L" ? t("studentsPage.detailGenderM") : t("studentsPage.detailGenderF") },
+            { label: t("studentsPage.detailMarital"), value: selected.maritalStatus },
+            { label: t("studentsPage.detailEmployment"), value: selected.employmentStatus },
+            { label: t("studentsPage.detailYear"), value: selected.entryYear },
+            { label: t("studentsPage.detailSemester"), value: `${t("studentsPage.detailSemesterUnit")} ${selected.currentSemester}` },
+            { label: t("studentsPage.detailIpk"), value: selected.ipk.toFixed(2) },
           ].map(({ label, value }) => (
             <div key={label} className="rounded-xl border bg-card p-4">
               <p className="text-xs text-muted-foreground">{label}</p>
@@ -64,11 +64,11 @@ export default function AdminStudentsPage() {
         </div>
 
         <div className="rounded-xl border bg-card p-4">
-          <p className="mb-3 text-xs font-semibold text-muted-foreground uppercase">IPS Per Semester</p>
+          <p className="mb-3 text-xs font-semibold text-muted-foreground uppercase">{t("studentsPage.detailIpsSem")}</p>
           <div className="flex flex-wrap gap-2">
             {selected.ips.map((v, i) => (
               <div key={i} className="rounded-lg border bg-background px-3 py-2 text-center">
-                <p className="text-[10px] text-muted-foreground">Sem {i + 1}</p>
+                <p className="text-[10px] text-muted-foreground">{t("studentsPage.detailSem")} {i + 1}</p>
                 <p className="font-mono text-sm font-bold">{v.toFixed(2)}</p>
               </div>
             ))}
@@ -124,12 +124,12 @@ export default function AdminStudentsPage() {
                   <p className="font-mono text-xs text-muted-foreground">{s.nim}</p>
                 </div>
                 <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                  IPK {s.ipk.toFixed(2)}
+                  {t("studentsPage.detailIpk")} {s.ipk.toFixed(2)}
                 </span>
               </div>
               <div className="mt-3 flex items-center justify-between border-t pt-3">
                 <p className="text-xs text-muted-foreground">{s.program}</p>
-                <p className="text-xs text-muted-foreground">Sem {s.currentSemester}</p>
+                <p className="text-xs text-muted-foreground">{t("studentsPage.detailSem")} {s.currentSemester}</p>
               </div>
             </button>
           ))}

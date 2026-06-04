@@ -49,6 +49,7 @@ function GroupedBarChart({
   data: { category: string; onTime: number; late: number }[];
   loading?: boolean;
 }) {
+  const { t } = useI18n();
   return (
     <Card>
       <CardHeader>
@@ -58,7 +59,7 @@ function GroupedBarChart({
       <CardContent>
         {loading ? (
           <div className="flex h-[260px] items-center justify-center text-muted-foreground text-sm animate-pulse">
-            Memuat data...
+            {t("analytics.loading")}
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={260}>
@@ -88,7 +89,7 @@ function GroupedBarChart({
               />
               <Bar
                 dataKey="onTime"
-                name="Tepat Waktu"
+                name={t("analytics.chartOnTime")}
                 fill="#ff8c00"
                 radius={[4, 4, 0, 0]}
               >
@@ -98,7 +99,7 @@ function GroupedBarChart({
               </Bar>
               <Bar
                 dataKey="late"
-                name="Terlambat"
+                name={t("analytics.chartLate")}
                 fill="#ff5f00"
                 radius={[4, 4, 0, 0]}
               >
@@ -122,14 +123,14 @@ export function PopulationCharts() {
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <GroupedBarChart
-        title="Distribusi Usia Mahasiswa"
-        description="Perbandingan kelulusan tepat waktu vs terlambat berdasarkan kelompok usia"
+        title={t("analytics.chartAgeTitle")}
+        description={t("analytics.chartAgeDesc")}
         data={ageData ?? []}
         loading={loadingAge}
       />
       <GroupedBarChart
-        title="Distribusi Status Pekerjaan"
-        description="Mahasiswa yang bekerja cenderung lebih berisiko terlambat lulus"
+        title={t("analytics.chartEmpTitle")}
+        description={t("analytics.chartEmpDesc")}
         data={empData ?? []}
         loading={loadingEmp}
       />

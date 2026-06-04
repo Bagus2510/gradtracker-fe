@@ -6,7 +6,7 @@ import { useAuth } from "@/context/auth-context";
 import { useI18n } from "@/context/i18n-context";
 import type { PredictionLogEntry } from "@/types";
 import { cn } from "@/lib/utils";
-import { ScrollText, Loader2, BrainCircuit } from "lucide-react";
+import { ScrollText, Loader2 } from "lucide-react";
 
 const RISK_BADGE = {
   High: "bg-destructive/20 text-destructive border-destructive",
@@ -15,7 +15,7 @@ const RISK_BADGE = {
 } as const;
 
 export default function PredictionsPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { user } = useAuth();
   const [logs, setLogs] = useState<PredictionLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,12 +24,15 @@ export default function PredictionsPage() {
     fetchAllPredictions().then(setLogs).finally(() => setLoading(false));
   }, []);
 
+  // Locale string for dates based on current lang
+  const dateLocale = lang === "id" ? "id-ID" : "en-US";
+
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold">Log Semua Prediksi</h2>
+        <h2 className="text-xl font-bold">{t("predictionsPage.title")}</h2>
         <p className="text-sm text-muted-foreground">
-          {logs.length} prediksi dari seluruh mahasiswa.
+          {logs.length} {t("predictionsPage.descCount")}
         </p>
       </div>
 
@@ -40,7 +43,7 @@ export default function PredictionsPage() {
       ) : logs.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed py-20 text-muted-foreground">
           <ScrollText className="h-10 w-10 opacity-30" />
-          <p className="text-sm">Belum ada prediksi yang dilakukan oleh mahasiswa.</p>
+          <p className="text-sm">{t("predictionsPage.emptyStudent")}</p>
         </div>
       ) : (
         <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
@@ -48,10 +51,10 @@ export default function PredictionsPage() {
             <thead className="border-b bg-muted/50">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">{t("predictionsPage.colStudent")}</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Waktu</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Risk</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Prediksi</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Confidence</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">{t("predictionsPage.colTime")}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">{t("predictionsPage.colRisk")}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">{t("predictionsPage.colPrediction")}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">{t("predictionsPage.colConfidence")}</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">{t("predictionsPage.colModel")}</th>
               </tr>
             </thead>
@@ -63,7 +66,7 @@ export default function PredictionsPage() {
                     <p className="font-mono text-xs text-muted-foreground">{log.studentNim}</p>
                   </td>
                   <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
-                    {new Date(log.createdAt).toLocaleString("id-ID", {
+                    {new Date(log.createdAt).toLocaleString(dateLocale, {
                       day: "2-digit", month: "short", year: "numeric",
                       hour: "2-digit", minute: "2-digit",
                     })}

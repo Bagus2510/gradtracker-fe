@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/context/auth-context";
@@ -13,56 +13,45 @@ import {
   Cpu,
   Moon,
   Sun,
-  Bell,
-  TrendingDown,
   Globe,
+  Users,
+  BrainCircuit,
+  ScrollText,
   type LucideIcon,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface PageMeta {
-  title: string;
+  titleKey: string;
   icon: LucideIcon;
 }
 
-const PAGE_META: Record<string, PageMeta> = {
-  "/dashboard": { title: "Dashboard Overview", icon: LayoutDashboard },
-  "/analytics": { title: "Predictive Analytics", icon: BarChart3 },
-  "/profile": { title: "Student Profile", icon: UserCircle },
-  "/simulation": { title: "Data & Simulation", icon: Cpu },
+const PAGE_META_CONFIG: Record<string, PageMeta> = {
+  "/dashboard":    { titleKey: "header.pageDashboard",    icon: LayoutDashboard },
+  "/students":     { titleKey: "header.pageStudents",     icon: Users           },
+  "/analytics":    { titleKey: "header.pageAnalytics",    icon: BarChart3       },
+  "/models":       { titleKey: "header.pageModels",       icon: BrainCircuit    },
+  "/predictions":  { titleKey: "header.pagePredictions",  icon: ScrollText      },
+  "/profile":      { titleKey: "header.pageProfile",      icon: UserCircle      },
+  "/simulation":   { titleKey: "header.pageSimulation",   icon: Cpu             },
 };
-
-const ROLE_BADGE: Record<string, { label: string; classes: string }> = {
-  admin: {
-    label: "Admin",
-    classes:
-      "bg-primary/20 text-primary border border-primary dark:bg-primary/20 dark:text-primary dark:border-primary",
-  },
-  student: {
-    label: "Mahasiswa",
-    classes:
-      "bg-secondary/20 text-secondary border border-secondary dark:bg-secondary/20 dark:text-secondary dark:border-secondary",
-  },
-};
-
 
 export function AppHeader() {
   const pathname = usePathname();
-  const router = useRouter();
   const { user } = useAuth();
   const { isDark, mounted, toggle } = useTheme();
-  const { lang, setLang } = useI18n();
+  const { lang, setLang, t } = useI18n();
 
-  const meta = PAGE_META[pathname];
-  const Icon = meta?.icon;
-  const roleBadge = user?.role ? ROLE_BADGE[user.role] : null;
+  const metaConfig = PAGE_META_CONFIG[pathname];
+  const Icon = metaConfig?.icon;
+  const pageTitle = metaConfig ? t(metaConfig.titleKey) : "GradTracker";
+
+  const roleBadgeLabel = user?.role === "admin"
+    ? t("header.roleBadgeAdmin")
+    : t("header.roleBadgeStudent");
+
+  const roleBadgeClasses = user?.role === "admin"
+    ? "bg-primary/20 text-primary border border-primary dark:bg-primary/20 dark:text-primary dark:border-primary"
+    : "bg-secondary/20 text-secondary border border-secondary dark:bg-secondary/20 dark:text-secondary dark:border-secondary";
 
   return (
     <header className="sticky top-0 z-10 flex h-[max(3.5rem,env(safe-area-inset-top))] shrink-0 items-center gap-2 border-b bg-background/80 px-4 backdrop-blur-md pt-[env(safe-area-inset-top)] [-webkit-app-region:drag]">
@@ -75,7 +64,7 @@ export function AppHeader() {
       <div className="flex items-center gap-2 [-webkit-app-region:no-drag]">
         {Icon && <Icon className="h-4 w-4 text-primary" />}
         <h1 className="text-sm font-semibold">
-          {meta?.title ?? "GradTracker"}
+          {pageTitle}
         </h1>
       </div>
 
@@ -106,11 +95,9 @@ export function AppHeader() {
         )}
 
         {/* ── Role Badge ── */}
-        {roleBadge && (
-          <span
-            className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${roleBadge.classes}`}
-          >
-            {roleBadge.label}
+        {user?.role && (
+          <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${roleBadgeClasses}`}>
+            {roleBadgeLabel}
           </span>
         )}
       </div>

@@ -6,7 +6,6 @@ import {
   GraduationCap,
   LayoutDashboard,
   BarChart3,
-  Cpu,
   LogOut,
   BrainCircuit,
   Users,
@@ -26,20 +25,18 @@ import {
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-const ADMIN_NAV = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/students", label: "Daftar Mahasiswa", icon: Users },
-  { href: "/analytics", label: "Analitik", icon: BarChart3 },
-  { href: "/models", label: "Kelola Model ML", icon: BrainCircuit },
-  { href: "/predictions", label: "Log Prediksi", icon: ScrollText },
-];
-
-
-
 export function AppSidebar() {
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const { t } = useI18n();
+
+  const ADMIN_NAV = [
+    { href: "/dashboard",    label: t("sidebar.dashboard"),    icon: LayoutDashboard },
+    { href: "/students",     label: t("sidebar.students"),     icon: Users           },
+    { href: "/analytics",    label: t("sidebar.analytics"),    icon: BarChart3       },
+    { href: "/models",       label: t("sidebar.models"),       icon: BrainCircuit    },
+    { href: "/predictions",  label: t("sidebar.predictions"),  icon: ScrollText      },
+  ];
 
   const navItems = ADMIN_NAV;
 
@@ -64,7 +61,7 @@ export function AppSidebar() {
               GradTracker
             </p>
             <p className="text-xs font-medium capitalize text-sidebar-foreground/60">
-              Admin Panel
+              {t("sidebar.adminPanel")}
             </p>
           </div>
         </div>
@@ -113,7 +110,7 @@ export function AppSidebar() {
           <button
             onClick={logout}
             className="rounded-lg p-1.5 text-sidebar-foreground/40 transition-colors hover:bg-destructive hover:text-destructive cursor-pointer"
-            title="Logout"
+            title={t("sidebar.logout")}
           >
             <LogOut className="h-4 w-4" />
           </button>

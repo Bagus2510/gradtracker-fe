@@ -50,7 +50,7 @@ function UploadModelCard({ onUploaded }: { onUploaded: (m: MLModel) => void }) {
   const handleFile = (f: File) => {
     const ext = f.name.split(".").pop()?.toLowerCase();
     if (ext !== "pkl" && ext !== "joblib") {
-      setError("Hanya file .pkl atau .joblib yang diizinkan.");
+      setError(t("modelsPage.errorFileType"));
       return;
     }
     setFile(f);
@@ -83,7 +83,7 @@ function UploadModelCard({ onUploaded }: { onUploaded: (m: MLModel) => void }) {
       setFile(null);
       setForm({ name: "", algorithm: "Random Forest", version: "1.0.0", accuracy: "", description: "" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload gagal.");
+      setError(err instanceof Error ? err.message : t("modelsPage.errorUpload"));
     } finally {
       setUploading(false);
     }
@@ -201,7 +201,7 @@ function UploadModelCard({ onUploaded }: { onUploaded: (m: MLModel) => void }) {
         {uploading ? (
           <><Loader2 className="h-4 w-4 animate-spin" /> {t("modelsPage.uploadingBtn")}</>
         ) : (
-          <><Upload className="h-4 w-4" /> Upload Model</>
+          <><Upload className="h-4 w-4" /> {t("modelsPage.uploadBtn")}</>
         )}
       </button>
     </form>
@@ -219,7 +219,7 @@ function ModelCard({
   onActivate: () => void;
   onDelete: () => void;
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   return (
     <div
       className={cn(
@@ -258,7 +258,7 @@ function ModelCard({
       )}
 
       <p className="mt-2 text-[10px] text-muted-foreground">
-        {model.originalFilename} · {t("modelsPage.cardUploadDate")} {new Date(model.uploadedAt).toLocaleDateString("id-ID")}
+        {model.originalFilename} · {t("modelsPage.cardUploadDate")} {new Date(model.uploadedAt).toLocaleDateString(lang === "id" ? "id-ID" : "en-US")}
       </p>
 
       <div className="mt-4 flex gap-2">
@@ -303,7 +303,7 @@ export default function ModelsPage() {
     return (
       <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed py-20 text-muted-foreground">
         <BrainCircuit className="h-10 w-10 opacity-30" />
-        <p>Halaman ini hanya untuk Admin.</p>
+        <p>{t("modelsPage.adminOnly")}</p>
       </div>
     );
   }
@@ -312,10 +312,10 @@ export default function ModelsPage() {
     setActionId(id);
     try {
       await activateMLModel(id);
-      setMessage("Model berhasil diaktifkan!");
+      setMessage(t("modelsPage.successActivate"));
       loadModels();
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Gagal mengaktifkan.");
+      setMessage(err instanceof Error ? err.message : t("modelsPage.errorActivate"));
     } finally {
       setActionId(null);
       setTimeout(() => setMessage(null), 3000);
@@ -327,10 +327,10 @@ export default function ModelsPage() {
     setActionId(id);
     try {
       await deleteMLModel(id);
-      setMessage(`Model "${name}" dihapus.`);
+      setMessage(`"${name}" ${t("modelsPage.successDelete")}`);
       loadModels();
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Gagal menghapus.");
+      setMessage(err instanceof Error ? err.message : t("modelsPage.errorDelete"));
     } finally {
       setActionId(null);
       setTimeout(() => setMessage(null), 3000);
@@ -364,7 +364,7 @@ export default function ModelsPage() {
         </div>
       )}
 
-      <UploadModelCard onUploaded={(m) => { setModels((p) => [m, ...p]); setMessage(`Model "${m.name}" berhasil diupload!`); }} />
+      <UploadModelCard onUploaded={(m) => { setModels((p) => [m, ...p]); setMessage(`"${m.name}" ${t("modelsPage.successUpload")}`); }} />
 
       {/* Model list */}
       <div>

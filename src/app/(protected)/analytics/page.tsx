@@ -27,7 +27,7 @@ export default function AnalyticsPage() {
       icon: Users,
       label: t("analytics.totalTitle"),
       value: kpi?.totalStudents ?? 0,
-      sub: "Total Mahasiswa",
+      sub: t("analytics.totalSub"),
       color: "text-primary dark:text-primary",
       bg: "bg-primary/20",
     },
@@ -35,7 +35,7 @@ export default function AnalyticsPage() {
       icon: AlertTriangle,
       label: t("analytics.highRiskTitle"),
       value: kpi?.highRiskCount ?? 0,
-      sub: `${kpi?.totalStudents ? (((kpi.highRiskCount) / kpi.totalStudents) * 100).toFixed(1) : 0}% dari total`,
+      sub: `${kpi?.totalStudents ? (((kpi.highRiskCount) / kpi.totalStudents) * 100).toFixed(1) : 0}${t("analytics.highRiskSub")}`,
       color: "text-destructive dark:text-destructive",
       bg: "bg-destructive/20",
     },
@@ -43,7 +43,7 @@ export default function AnalyticsPage() {
       icon: TrendingDown,
       label: t("analytics.degTitle"),
       value: "-", // Temporarily disabled since we removed mock data that tracks degradation exactly like this
-      sub: "Membutuhkan perhatian",
+      sub: t("analytics.degSub"),
       color: "text-orange-600 dark:text-orange-500",
       bg: "bg-orange-500/20",
     },
@@ -51,7 +51,7 @@ export default function AnalyticsPage() {
       icon: Activity,
       label: t("analytics.predTitle"),
       value: kpi?.predictedLate ?? 0,
-      sub: `${kpi?.totalStudents ? (((kpi.predictedLate) / kpi.totalStudents) * 100).toFixed(1) : 0}% prediksi terlambat`,
+      sub: `${kpi?.totalStudents ? (((kpi.predictedLate) / kpi.totalStudents) * 100).toFixed(1) : 0}${t("analytics.predSub")}`,
       color: "text-accent dark:text-accent",
       bg: "bg-accent/20",
     },
@@ -63,7 +63,7 @@ export default function AnalyticsPage() {
       <div>
         <h2 className="text-xl font-bold">{t("analytics.title")}</h2>
         <p className="text-sm text-muted-foreground">
-          Distribusi populasi mahasiswa dan analitik kelulusan.
+          {t("analytics.desc")}
         </p>
       </div>
 

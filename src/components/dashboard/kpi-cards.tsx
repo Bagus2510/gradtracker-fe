@@ -39,7 +39,7 @@ export function KPICards() {
       key: "totalStudents" as const,
       title: t("dashboard.kpiTotal"),
       icon: Users,
-      description: "Mahasiswa terdaftar aktif",
+      description: t("dashboard.kpiDescRegistered"),
       iconBg: "bg-primary/20 dark:bg-primary/20",
       iconColor: "text-primary dark:text-primary",
       topBar: "from-primary to-primary/80",
@@ -49,7 +49,7 @@ export function KPICards() {
       key: "predictedOnTime" as const,
       title: t("dashboard.kpiOnTime"),
       icon: CheckCircle2,
-      description: "Lulus sesuai target",
+      description: t("dashboard.kpiDescOnTime"),
       iconBg: "bg-secondary/20 dark:bg-secondary/20",
       iconColor: "text-secondary dark:text-secondary",
       topBar: "from-secondary to-secondary/80",
@@ -57,9 +57,9 @@ export function KPICards() {
     },
     {
       key: "predictedLate" as const,
-      title: t("dashboard.kpiLate") || "Prediksi Terlambat",
+      title: t("dashboard.kpiLate"),
       icon: AlertTriangle,
-      description: "Berisiko tidak tepat waktu",
+      description: t("dashboard.kpiDescLate"),
       iconBg: "bg-destructive/20 dark:bg-destructive/20",
       iconColor: "text-destructive dark:text-destructive",
       topBar: "from-destructive to-destructive/80",
@@ -67,9 +67,9 @@ export function KPICards() {
     },
     {
       key: "highRiskCount" as const,
-      title: "Risiko Tinggi",
+      title: t("dashboard.kpiHighRisk"),
       icon: AlertCircle,
-      description: "Memerlukan intervensi segera",
+      description: t("dashboard.kpiDescHighRisk"),
       iconBg: "bg-accent/20 dark:bg-accent/20",
       iconColor: "text-accent dark:text-accent",
       topBar: "from-accent to-accent/80",
@@ -132,7 +132,7 @@ export function KPICards() {
                 />
               </div>
               <p className="mt-1 text-right text-[10px] text-muted-foreground">
-                {((value / total) * 100).toFixed(0)}% dari total
+                {((value / total) * 100).toFixed(0)}{t("dashboard.kpiOfTotal")}
               </p>
             </CardContent>
           </Card>

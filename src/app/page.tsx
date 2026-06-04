@@ -109,13 +109,13 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
               <span className="text-[10px] font-medium text-muted-foreground">/ 100</span>
             </div>
             <span className={cn("rounded-full px-3 py-1 text-xs font-bold", cfg.badge)}>
-              {result.riskLabel} Risk
+              {result.riskLabel} {t("publicPage.resultRiskLabel")}
             </span>
           </div>
 
           <div className="flex-1 space-y-3 text-center sm:text-left">
             <div>
-              <p className="text-sm text-muted-foreground">Prediksi Kelulusan</p>
+              <p className="text-sm text-muted-foreground">{t("publicPage.resultPrediction")}</p>
               <p className={cn("text-2xl font-black", cfg.text)}>
                 {result.prediction === "On-Time" ? `✅ ${t("publicPage.resultOnTime")}` : `⚠️ ${t("publicPage.resultLate")}`}
               </p>
@@ -123,20 +123,20 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
 
             <div className="flex flex-wrap justify-center gap-4 sm:justify-start">
               <div>
-                <p className="text-xs text-muted-foreground">Kepercayaan Model</p>
+                <p className="text-xs text-muted-foreground">{t("publicPage.resultConfidence")}</p>
                 <p className="text-lg font-bold">
                   {(result.confidence * 100).toFixed(1)}%
                 </p>
               </div>
               {result.avgIPS !== null && (
                 <div>
-                  <p className="text-xs text-muted-foreground">Rata-rata IPS</p>
+                  <p className="text-xs text-muted-foreground">{t("publicPage.resultAvgIps")}</p>
                   <p className="text-lg font-bold">{result.avgIPS?.toFixed(2)}</p>
                 </div>
               )}
               {result.ipsDrop !== null && result.ipsDrop !== undefined && (
                 <div>
-                  <p className="text-xs text-muted-foreground">Perubahan IPS</p>
+                  <p className="text-xs text-muted-foreground">{t("publicPage.resultIpsChange")}</p>
                   <p
                     className={cn(
                       "flex items-center gap-1 text-lg font-bold",
@@ -173,7 +173,7 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
         <div className="rounded-xl border bg-card p-5 shadow-sm">
           <p className="mb-4 flex items-center gap-2 text-sm font-semibold">
             <BarChart2 className="h-4 w-4 text-primary" />
-            Tren IPS Kamu
+            {t("publicPage.resultIpsTrend")}
           </p>
           <ResponsiveContainer width="100%" height={160}>
             <LineChart data={trendData}>
@@ -207,7 +207,7 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
         <div className="rounded-xl border bg-card p-5 shadow-sm">
           <p className="mb-3 flex items-center gap-2 text-sm font-semibold">
             <RiskIcon className={cn("h-4 w-4", cfg.text)} />
-            Faktor Risiko
+            {t("publicPage.resultFactors")}
           </p>
           <ul className="space-y-2">
             {result.keyFactors.map((f, i) => (
@@ -221,7 +221,7 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
         <div className="rounded-xl border bg-card p-5 shadow-sm">
           <p className="mb-3 flex items-center gap-2 text-sm font-semibold">
             <Lightbulb className="h-4 w-4 text-secondary" />
-            Rekomendasi
+            {t("publicPage.resultRecs")}
           </p>
           <ul className="space-y-2">
             {result.recommendations.map((r, i) => (
@@ -244,10 +244,10 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
   const [step, setStep] = useState(0);
 
   const steps = [
-    { text: "Memuat Modul Prediksi AI...", icon: Cpu },
-    { text: `Panduan 1: Lengkapi ${t("publicPage.identityTitle")} & Fakultas`, icon: User },
-    { text: "Panduan 2: Masukkan Riwayat Nilai IPS (0.00-4.00)", icon: BookOpen },
-    { text: "Panduan 3: Sistem Akan Memprediksi Peluang Kelulusan", icon: BrainCircuit },
+    { text: t("publicPage.bootLoading"), icon: Cpu },
+    { text: t("publicPage.bootGuide1"), icon: User },
+    { text: t("publicPage.bootGuide2"), icon: BookOpen },
+    { text: t("publicPage.bootGuide3"), icon: BrainCircuit },
   ];
 
   useEffect(() => {
@@ -298,7 +298,7 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
 
         <div className="w-full space-y-3">
           <div className="flex justify-between text-xs font-bold font-mono text-primary">
-            <span>MEMUAT SISTEM</span>
+            <span>{t("publicPage.bootLoadingLabel")}</span>
             <span>{Math.floor(progress)}%</span>
           </div>
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-primary/20">
@@ -356,7 +356,7 @@ export default function PublicPredictionPage() {
         window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
       }, 100);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Gagal memproses prediksi.");
+      setError(err instanceof Error ? err.message : t("publicPage.errorPredict"));
     } finally {
       setPredicting(false);
     }
@@ -417,7 +417,7 @@ export default function PublicPredictionPage() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
             </span>
-            Prediksi Berbasis Machine Learning
+            {t("publicPage.heroBadge")}
           </div>
           <h1 className="text-4xl font-black tracking-tight sm:text-5xl text-foreground">
             {t("publicPage.heroTitle")}
@@ -438,7 +438,7 @@ export default function PublicPredictionPage() {
           {/* Identity */}
           <div className="rounded-2xl border bg-card p-5 sm:p-6 shadow-sm space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-both">
             <h3 className="flex items-center gap-2 text-sm font-bold text-foreground uppercase tracking-wider">
-              <User className="h-4 w-4 text-primary" /> Data Diri
+              <User className="h-4 w-4 text-primary" /> {t("publicPage.identityTitle")}
             </h3>
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="space-y-1.5">
@@ -584,7 +584,7 @@ export default function PublicPredictionPage() {
                 {form.ips.map((val, idx) => (
                   <label key={idx} className="space-y-1">
                     <span className="block text-center text-[10px] text-muted-foreground">
-                      Sem {idx + 1}
+                      {t("publicPage.semLabel")} {idx + 1}
                     </span>
                     <input
                       type="number"
@@ -616,17 +616,17 @@ export default function PublicPredictionPage() {
             {predicting ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />
-                Menganalisis Data...
+                {t("publicPage.submitBtnAnalyzing")}
               </>
             ) : result ? (
               <>
                 <RefreshCw className="h-5 w-5" />
-                Prediksi Ulang
+                {t("publicPage.submitBtnRetry")}
               </>
             ) : (
               <>
                 <Cpu className="h-5 w-5" />
-                Prediksi Sekarang
+                {t("publicPage.submitBtnFirst")}
               </>
             )}
           </button>
