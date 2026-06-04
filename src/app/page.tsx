@@ -41,6 +41,47 @@ import {
   CartesianGrid,
 } from "recharts";
 
+const DICT_EN: Record<string, string> = {
+  "Segera konsultasi dengan Dosen Pembimbing Akademik (PA)": "Consult your Academic Advisor immediately",
+  "Prioritaskan penyelesaian SKS inti / wajib terlebih dahulu": "Prioritize completing core/mandatory courses",
+  "Pertimbangkan pengurangan jam kerja atau mengambil cuti kerja": "Consider reducing work hours or taking a leave",
+  "Ikuti program bimbingan belajar atau study group": "Join a tutoring program or study group",
+  "Manfaatkan sesi konsultasi dosen mata kuliah": "Utilize consultation sessions with lecturers",
+  "Pertahankan performa akademik saat ini": "Maintain current academic performance",
+  "Rencanakan jadwal pengerjaan skripsi/tugas akhir lebih awal": "Plan your thesis/final project schedule early",
+  "Konsisten jaga nilai IPS di atas 3.00": "Consistently maintain your GPA above 3.00",
+  "Data IPS belum cukup untuk prediksi akurat": "Insufficient GPA data for accurate prediction",
+  "Input minimal 2 semester IPS untuk hasil prediksi lebih baik": "Input at least 2 semesters of GPA for better prediction",
+  "Status bekerja meningkatkan risiko signifikan": "Employment status significantly increases risk",
+  "Status menikah berkorelasi dengan beban non-akademik": "Marital status correlates with non-academic burden",
+  "Usia di atas rata-rata angkatan": "Age is above the cohort average",
+  "Rata-rata IPS di bawah 2.50": "Average GPA is below 2.50",
+  "Performa akademik stabil dan konsisten": "Academic performance is stable and consistent",
+  "Status bekerja meningkatkan risiko": "Employment status increases risk",
+  "Performa akademik stabil": "Academic performance is stable"
+};
+
+function translateBackendStr(text: string, lang: string): string {
+  if (lang !== "en") return text;
+  
+  if (DICT_EN[text]) return DICT_EN[text];
+  
+  // Handle dynamic strings
+  if (text.includes("Penurunan IPS") && text.includes("poin pada semester terakhir")) {
+    return text.replace("Penurunan IPS", "GPA dropped by").replace("poin pada semester terakhir", "points in the last semester");
+  }
+  if (text.includes("Sedikit penurunan IPS") && text.includes("poin")) {
+    return text.replace("Sedikit penurunan IPS", "Slight GPA drop of").replace("poin", "points");
+  }
+  if (text.includes("Penurunan IPS") && text.includes("poin")) {
+    return text.replace("Penurunan IPS", "GPA dropped by").replace("poin", "points");
+  }
+  if (text.includes("Rata-rata IPS") && text.includes("di bawah standar")) {
+    return text.replace("Rata-rata IPS", "Average GPA").replace("di bawah standar", "is below standard");
+  }
+  return text;
+}
+
 // ── Shared Config ─────────────────────────────────────────────────────────────
 const FACULTIES: Record<string, string[]> = {
   "Fakultas Teknik": ["Teknik Informatika", "Sistem Informasi", "Teknik Elektro", "Teknik Mesin", "Teknik Industri", "Teknik Sipil"],
@@ -76,7 +117,7 @@ const RISK_CFG = {
 
 // ── Result component ─────────────────────────────────────────────────────────
 function PredictionResultCard({ result }: { result: PredictionResult }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const cfg = RISK_CFG[result.riskLabel];
   const RiskIcon = cfg.icon;
 
@@ -104,12 +145,12 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
               )}
             >
               <span className={cn("text-3xl font-black tabular-nums", cfg.text)}>
-                {result.riskScore}
+                {(result.confidence * 100).toFixed(0)}
               </span>
-              <span className="text-[10px] font-medium text-muted-foreground">/ 100</span>
+              <span className="text-[14px] font-bold text-muted-foreground">%</span>
             </div>
             <span className={cn("rounded-full px-3 py-1 text-xs font-bold", cfg.badge)}>
-              {result.riskLabel} {t("publicPage.resultRiskLabel")}
+              {result.riskLabel} Risk
             </span>
           </div>
 
@@ -117,15 +158,15 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
             <div>
               <p className="text-sm text-muted-foreground">{t("publicPage.resultPrediction")}</p>
               <p className={cn("text-2xl font-black", cfg.text)}>
-                {result.prediction === "On-Time" ? `✅ ${t("publicPage.resultOnTime")}` : `⚠️ ${t("publicPage.resultLate")}`}
+                {result.prediction === "TEPAT" ? `✅ ${t("publicPage.resultOnTime")}` : `⚠️ ${t("publicPage.resultLate")}`}
               </p>
             </div>
 
             <div className="flex flex-wrap justify-center gap-4 sm:justify-start">
               <div>
-                <p className="text-xs text-muted-foreground">{t("publicPage.resultConfidence")}</p>
+                <p className="text-xs text-muted-foreground">Risk Score</p>
                 <p className="text-lg font-bold">
-                  {(result.confidence * 100).toFixed(1)}%
+                  {result.riskScore} / 100
                 </p>
               </div>
               {result.avgIPS !== null && (
@@ -192,9 +233,9 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
               <Line
                 type="monotone"
                 dataKey="ips"
-                stroke="hsl(var(--primary))"
+                stroke="#f59e0b"
                 strokeWidth={2.5}
-                dot={{ r: 4 }}
+                dot={{ r: 4, fill: "#f59e0b" }}
                 activeDot={{ r: 6 }}
               />
             </LineChart>
@@ -213,7 +254,7 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
             {result.keyFactors.map((f, i) => (
               <li key={i} className="flex items-start gap-2 text-sm">
                 <ChevronRight className={cn("mt-0.5 h-3.5 w-3.5 shrink-0", cfg.text)} />
-                <span>{f}</span>
+                <span>{translateBackendStr(f, lang)}</span>
               </li>
             ))}
           </ul>
@@ -227,7 +268,7 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
             {result.recommendations.map((r, i) => (
               <li key={i} className="flex items-start gap-2 text-sm">
                 <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-secondary" />
-                <span>{r}</span>
+                <span>{translateBackendStr(r, lang)}</span>
               </li>
             ))}
           </ul>
@@ -320,6 +361,7 @@ export default function PublicPredictionPage() {
   const { isDark, mounted, toggle: toggleTheme } = useTheme();
   const [booting, setBooting] = useState(true);
   const [faculty, setFaculty] = useState<string>("");
+  const [level, setLevel] = useState<string>("S1/D4");
   const [form, setForm] = useState<PublicPredictInput>({
     nim: "",
     name: "",
@@ -349,7 +391,8 @@ export default function PublicPredictionPage() {
     setPredicting(true);
     setError(null);
     try {
-      const res = await predictPublicRisk(form);
+      const payload = { ...form, program: `${level} - ${form.program}` };
+      const res = await predictPublicRisk(payload);
       setResult(res);
       // Scroll to result slightly delay
       setTimeout(() => {
@@ -536,19 +579,33 @@ export default function PublicPredictionPage() {
                   {Object.keys(FACULTIES).map((f) => <option key={f} value={f}>{f}</option>)}
                 </select>
               </label>
-              <label className="space-y-1.5">
-                <span className="text-xs font-medium text-muted-foreground">{t("publicPage.academicProgram")}</span>
-                <select
-                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
-                  value={form.program}
-                  onChange={(e) => setForm((f) => ({ ...f, program: e.target.value }))}
-                  disabled={!faculty}
-                  required
-                >
-                  <option value="" disabled>{t("publicPage.academicProgramPh")}</option>
-                  {faculty && FACULTIES[faculty].map((p) => <option key={p} value={p}>{p}</option>)}
-                </select>
-              </label>
+              
+              <div className="grid grid-cols-3 gap-2">
+                <label className="space-y-1.5 col-span-1">
+                  <span className="text-xs font-medium text-muted-foreground">Jenjang</span>
+                  <select
+                    className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
+                    value={level}
+                    onChange={(e) => setLevel(e.target.value)}
+                  >
+                    <option value="S1/D4">S1 / D4</option>
+                    <option value="D3">D3</option>
+                  </select>
+                </label>
+                <label className="space-y-1.5 col-span-2">
+                  <span className="text-xs font-medium text-muted-foreground">{t("publicPage.academicProgram")}</span>
+                  <select
+                    className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+                    value={form.program}
+                    onChange={(e) => setForm((f) => ({ ...f, program: e.target.value }))}
+                    disabled={!faculty}
+                    required
+                  >
+                    <option value="" disabled>{t("publicPage.academicProgramPh")}</option>
+                    {faculty && FACULTIES[faculty].map((p) => <option key={p} value={p}>{p}</option>)}
+                  </select>
+                </label>
+              </div>
               <label className="space-y-1.5">
                 <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
                   <Calendar className="h-3 w-3" /> {t("publicPage.academicYear")}

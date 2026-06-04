@@ -93,7 +93,7 @@ export interface PredictionInput {
 export interface PredictionResult {
   riskScore: number;
   riskLabel: "Low" | "Medium" | "High";
-  prediction: "On-Time" | "Late";
+  prediction: "TEPAT" | "TERLAMBAT";
   confidence: number;
   keyFactors: string[];
   recommendations: string[];

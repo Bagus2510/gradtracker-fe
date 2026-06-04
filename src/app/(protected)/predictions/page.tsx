@@ -14,6 +14,19 @@ const RISK_BADGE = {
   Low: "bg-secondary/20 text-secondary border-secondary",
 } as const;
 
+function obfuscateNIM(nim: string | null | undefined) {
+  if (!nim) return "";
+  return nim.substring(0, 2) + "*".repeat(Math.max(nim.length - 2, 0));
+}
+
+function obfuscateName(name: string | null | undefined) {
+  if (!name) return "";
+  return name.split(" ").map(word => {
+    if (word.length <= 1) return word;
+    return word.charAt(0) + "*".repeat(word.length - 1);
+  }).join(" ");
+}
+
 export default function PredictionsPage() {
   const { t, lang } = useI18n();
   const { user } = useAuth();
@@ -62,8 +75,8 @@ export default function PredictionsPage() {
               {logs.map((log) => (
                 <tr key={log.id} className="transition-colors hover:bg-muted/30">
                   <td className="px-4 py-3">
-                    <p className="font-medium">{log.studentName ?? "—"}</p>
-                    <p className="font-mono text-xs text-muted-foreground">{log.studentNim}</p>
+                    <p className="font-medium">{obfuscateName(log.studentName) || "—"}</p>
+                    <p className="font-mono text-xs text-muted-foreground">{obfuscateNIM(log.studentNim)}</p>
                   </td>
                   <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
                     {new Date(log.createdAt).toLocaleString(dateLocale, {
@@ -85,10 +98,10 @@ export default function PredictionsPage() {
                     <span
                       className={cn(
                         "text-xs font-semibold",
-                        log.prediction === "On-Time" ? "text-secondary" : "text-destructive",
+                        log.prediction === "TEPAT" ? "text-secondary" : "text-destructive",
                       )}
                     >
-                      {log.prediction === "On-Time" ? `✓ ${t("predictionsPage.resultOnTime")}` : `⚠ ${t("predictionsPage.resultLate")}`}
+                      {log.prediction === "TEPAT" ? `✓ ${t("predictionsPage.resultOnTime")}` : `⚠ ${t("predictionsPage.resultLate")}`}
                     </span>
                   </td>
                   <td className="px-4 py-3 font-mono text-xs">

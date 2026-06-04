@@ -12,6 +12,19 @@ import {
   Loader2,
 } from "lucide-react";
 
+function obfuscateNIM(nim: string) {
+  if (!nim) return "";
+  return nim.substring(0, 2) + "*".repeat(Math.max(nim.length - 2, 0));
+}
+
+function obfuscateName(name: string) {
+  if (!name) return "";
+  return name.split(" ").map(word => {
+    if (word.length <= 1) return word;
+    return word.charAt(0) + "*".repeat(word.length - 1);
+  }).join(" ");
+}
+
 export default function AdminStudentsPage() {
   const { t } = useI18n();
   const [students, setStudents] = useState<StudentProfile[]>([]);
@@ -41,12 +54,12 @@ export default function AdminStudentsPage() {
             <ArrowLeft className="h-4 w-4" /> {t("studentsPage.back")}
           </button>
           <ChevronRight className="h-3 w-3 text-muted-foreground" />
-          <span className="text-sm font-semibold">{selected.name}</span>
+          <span className="text-sm font-semibold">{obfuscateName(selected.name)}</span>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           {[
-            { label: t("studentsPage.detailNim"), value: selected.nim },
+            { label: t("studentsPage.detailNim"), value: obfuscateNIM(selected.nim) },
             { label: t("studentsPage.detailProgram"), value: selected.program },
             { label: t("studentsPage.detailAge"), value: `${selected.age} ${t("studentsPage.detailAgeUnit")}` },
             { label: t("studentsPage.detailGender"), value: selected.gender === "L" ? t("studentsPage.detailGenderM") : t("studentsPage.detailGenderF") },
@@ -120,8 +133,8 @@ export default function AdminStudentsPage() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold">{s.name}</p>
-                  <p className="font-mono text-xs text-muted-foreground">{s.nim}</p>
+                  <p className="font-semibold">{obfuscateName(s.name)}</p>
+                  <p className="font-mono text-xs text-muted-foreground">{obfuscateNIM(s.nim)}</p>
                 </div>
                 <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                   {t("studentsPage.detailIpk")} {s.ipk.toFixed(2)}
