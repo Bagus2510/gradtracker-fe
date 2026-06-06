@@ -129,7 +129,7 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
   return (
     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 mt-8">
       {/* Main result */}
-      <div className={cn("rounded-2xl border-2 p-6", cfg.bg)}>
+      <div className={cn("rounded-2xl border-2 p-6 backdrop-blur-xl bg-card/50 hover:border-primary/50 hover:-translate-y-1 transition-all duration-300 ease-out shadow-xl", cfg.bg)}>
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
           {/* Risk score dial */}
           <div className="flex flex-col items-center gap-2">
@@ -211,7 +211,7 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
 
       {/* IPS Trend Chart */}
       {trendData && trendData.length > 1 && (
-        <div className="rounded-xl border bg-card p-5 shadow-sm">
+        <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 shadow-xl hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 ease-out">
           <p className="mb-4 flex items-center gap-2 text-sm font-semibold">
             <BarChart2 className="h-4 w-4 text-primary" />
             {t("publicPage.resultIpsTrend")}
@@ -244,8 +244,8 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
       )}
 
       {/* Key Factors & Recs */}
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-xl border bg-card p-5 shadow-sm">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 shadow-xl hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 ease-out">
           <p className="mb-3 flex items-center gap-2 text-sm font-semibold">
             <RiskIcon className={cn("h-4 w-4", cfg.text)} />
             {t("publicPage.resultFactors")}
@@ -259,7 +259,7 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
             ))}
           </ul>
         </div>
-        <div className="rounded-xl border bg-card p-5 shadow-sm">
+        <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 shadow-xl hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 ease-out">
           <p className="mb-3 flex items-center gap-2 text-sm font-semibold">
             <Lightbulb className="h-4 w-4 text-secondary" />
             {t("publicPage.resultRecs")}
@@ -479,7 +479,7 @@ export default function PublicPredictionPage() {
           )}
 
           {/* Identity */}
-          <div className="rounded-2xl border bg-card p-5 sm:p-6 shadow-sm space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-both">
+          <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 sm:p-8 shadow-xl hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 ease-out space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-both">
             <h3 className="flex items-center gap-2 text-sm font-bold text-foreground uppercase tracking-wider">
               <User className="h-4 w-4 text-primary" /> {t("publicPage.identityTitle")}
             </h3>
@@ -556,7 +556,7 @@ export default function PublicPredictionPage() {
           </div>
 
           {/* Academic */}
-          <div className="rounded-2xl border bg-card p-5 sm:p-6 shadow-sm space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
+          <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 sm:p-8 shadow-xl hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 ease-out space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
             <h3 className="flex items-center justify-between gap-2 text-sm font-bold text-foreground uppercase tracking-wider">
               <span className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-primary" /> {t("publicPage.academicTitle")}</span>
               <span className="rounded-full bg-secondary/20 px-3 py-1 text-xs font-semibold text-secondary lowercase tracking-normal">
@@ -668,7 +668,7 @@ export default function PublicPredictionPage() {
           <button
             type="submit"
             disabled={predicting}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-4 text-base font-bold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-60 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-both cursor-pointer"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-4 text-base font-bold text-primary-foreground shadow-lg shadow-primary/20 transition-all duration-300 ease-out hover:bg-primary hover:shadow-primary/40 hover:-translate-y-1 active:scale-95 disabled:opacity-60 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-both cursor-pointer"
           >
             {predicting ? (
               <>

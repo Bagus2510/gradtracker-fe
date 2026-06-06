@@ -66,7 +66,7 @@ export function IPSTrendChart() {
   const { data: trend, isLoading } = useAsync(fetchIPSTrend);
 
   return (
-    <Card>
+    <Card className="relative overflow-hidden backdrop-blur-xl bg-card/50 border-border/40 hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 ease-out shadow-lg">
       <CardHeader>
         <CardTitle>{t("dashboard.trendChartTitle")}</CardTitle>
         <CardDescription>
@@ -84,8 +84,8 @@ export function IPSTrendChart() {
             >
               <defs>
                 <linearGradient id="ipsGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ff8c00" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#ff8c00" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid
@@ -109,23 +109,23 @@ export function IPSTrendChart() {
               <Tooltip content={<CustomTooltip />} />
               <ReferenceLine
                 x="Sem 7"
-                stroke="#ff5f00"
+                stroke="#f59e0b"
                 strokeDasharray="4 2"
                 label={{
                   value: t("dashboard.trendDegradation"),
                   position: "insideTopRight",
                   fontSize: 10,
-                  fill: "#ff5f00",
+                  fill: "#f59e0b",
                 }}
               />
               <Area
                 type="monotone"
                 dataKey="avgIPS"
                 name={`Avg ${t("dashboard.trendY")}`}
-                stroke="#ff8c00"
+                stroke="#f59e0b"
                 strokeWidth={2.5}
                 fill="url(#ipsGrad)"
-                dot={{ r: 4, fill: "#ff8c00", strokeWidth: 2, stroke: "#fff" }}
+                dot={{ r: 4, fill: "#f59e0b", strokeWidth: 2, stroke: "#fff" }}
                 activeDot={{ r: 6 }}
               />
             </AreaChart>

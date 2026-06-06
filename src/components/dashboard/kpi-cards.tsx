@@ -94,7 +94,7 @@ export function KPICards() {
       {cardMeta.map((card) => {
         const value = kpi[card.key];
         return (
-          <Card key={card.title} className="relative overflow-hidden">
+          <Card key={card.title} className="relative overflow-hidden backdrop-blur-xl bg-card/50 border-border/40 hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 ease-out shadow-lg">
             <CardContent className="px-5 pb-4 pt-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">

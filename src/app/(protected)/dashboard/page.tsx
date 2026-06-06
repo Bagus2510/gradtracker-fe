@@ -19,11 +19,11 @@ export default function DashboardPage() {
   if (!user || user.role !== "admin") return null;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Page heading */}
-      <div>
-        <h2 className="text-xl font-bold">{t("dashboard.title")}</h2>
-        <p className="text-sm text-muted-foreground">{t("dashboard.desc")}</p>
+      <div className="mb-8">
+        <h2 className="text-3xl font-black tracking-tight">{t("dashboard.title")}</h2>
+        <p className="text-muted-foreground mt-1">{t("dashboard.desc")}</p>
       </div>
 
       {/* Row 1: KPI Cards */}
