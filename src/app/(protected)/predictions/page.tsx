@@ -6,12 +6,13 @@ import { useAuth } from "@/context/auth-context";
 import { useI18n } from "@/context/i18n-context";
 import type { PredictionLogEntry } from "@/types";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollText, Loader2 } from "lucide-react";
 
 const RISK_BADGE = {
-  High: "bg-destructive/20 text-destructive border-destructive",
-  Medium: "bg-accent/20 text-accent border-accent",
-  Low: "bg-secondary/20 text-secondary border-secondary",
+  High: "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/30",
+  Medium: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/30",
+  Low: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30",
 } as const;
 
 function obfuscateNIM(nim: string | null | undefined) {
@@ -50,8 +51,23 @@ export default function PredictionsPage() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+          <div className="border-b bg-muted/50 px-4 py-3 flex gap-4">
+            <Skeleton className="h-4 w-1/4" />
+            <Skeleton className="h-4 w-1/4" />
+            <Skeleton className="h-4 w-1/4" />
+            <Skeleton className="h-4 w-1/4" />
+          </div>
+          <div className="divide-y">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="flex gap-4 px-4 py-4">
+                <Skeleton className="h-4 w-1/4" />
+                <Skeleton className="h-4 w-1/4" />
+                <Skeleton className="h-4 w-1/4" />
+                <Skeleton className="h-4 w-1/4" />
+              </div>
+            ))}
+          </div>
         </div>
       ) : logs.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed py-20 text-muted-foreground">
@@ -98,7 +114,7 @@ export default function PredictionsPage() {
                     <span
                       className={cn(
                         "text-xs font-semibold",
-                        log.prediction === "TEPAT" ? "text-secondary" : "text-destructive",
+                        log.prediction === "TEPAT" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400",
                       )}
                     >
                       {log.prediction === "TEPAT" ? `✓ ${t("predictionsPage.resultOnTime")}` : `⚠ ${t("predictionsPage.resultLate")}`}

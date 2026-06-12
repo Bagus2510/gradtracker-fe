@@ -51,7 +51,7 @@ export function AppHeader() {
 
   const roleBadgeClasses = user?.role === "admin"
     ? "bg-primary/20 text-primary border border-primary dark:bg-primary/20 dark:text-primary dark:border-primary"
-    : "bg-secondary/20 text-secondary border border-secondary dark:bg-secondary/20 dark:text-secondary dark:border-secondary";
+    : "bg-emerald-500/10 text-emerald-700 border border-emerald-500/30 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30";
 
   return (
     <header className="sticky top-0 z-10 flex h-[max(3.5rem,env(safe-area-inset-top))] shrink-0 items-center gap-2 border-b bg-background/80 px-4 backdrop-blur-md pt-[env(safe-area-inset-top)] [-webkit-app-region:drag]">

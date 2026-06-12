@@ -40,44 +40,44 @@ export function KPICards() {
       title: t("dashboard.kpiTotal"),
       icon: Users,
       description: t("dashboard.kpiDescRegistered"),
-      iconBg: "bg-primary/20 dark:bg-primary/20",
-      iconColor: "text-primary dark:text-primary",
-      topBar: "from-primary to-primary/80",
-      valueColor: "text-primary dark:text-primary",
+      iconBg: "bg-blue-500/10 dark:bg-blue-500/20",
+      iconColor: "text-blue-600 dark:text-blue-400",
+      topBar: "from-blue-600 to-blue-400",
+      valueColor: "text-blue-700 dark:text-blue-400",
     },
     {
       key: "predictedOnTime" as const,
       title: t("dashboard.kpiOnTime"),
       icon: CheckCircle2,
       description: t("dashboard.kpiDescOnTime"),
-      iconBg: "bg-secondary/20 dark:bg-secondary/20",
-      iconColor: "text-secondary dark:text-secondary",
-      topBar: "from-secondary to-secondary/80",
-      valueColor: "text-secondary dark:text-secondary",
+      iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
+      iconColor: "text-emerald-600 dark:text-emerald-400",
+      topBar: "from-emerald-600 to-emerald-400",
+      valueColor: "text-emerald-700 dark:text-emerald-400",
     },
     {
       key: "predictedLate" as const,
       title: t("dashboard.kpiLate"),
       icon: AlertTriangle,
       description: t("dashboard.kpiDescLate"),
-      iconBg: "bg-destructive/20 dark:bg-destructive/20",
-      iconColor: "text-destructive dark:text-destructive",
-      topBar: "from-destructive to-destructive/80",
-      valueColor: "text-destructive dark:text-destructive",
+      iconBg: "bg-rose-500/10 dark:bg-rose-500/20",
+      iconColor: "text-rose-600 dark:text-rose-400",
+      topBar: "from-rose-600 to-rose-400",
+      valueColor: "text-rose-700 dark:text-rose-400",
     },
     {
       key: "highRiskCount" as const,
       title: t("dashboard.kpiHighRisk"),
       icon: AlertCircle,
       description: t("dashboard.kpiDescHighRisk"),
-      iconBg: "bg-accent/20 dark:bg-accent/20",
-      iconColor: "text-accent dark:text-accent",
-      topBar: "from-accent to-accent/80",
-      valueColor: "text-accent dark:text-accent",
+      iconBg: "bg-amber-500/10 dark:bg-amber-500/20",
+      iconColor: "text-amber-600 dark:text-amber-400",
+      topBar: "from-amber-600 to-amber-400",
+      valueColor: "text-amber-700 dark:text-amber-400",
     },
   ] as const;
 
-  if (isLoading || !kpi) {
+  if (isLoading) {
     return (
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
@@ -87,12 +87,12 @@ export function KPICards() {
     );
   }
 
-  const total = kpi.totalStudents;
+  const total = kpi?.totalStudents || 0;
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {cardMeta.map((card) => {
-        const value = kpi[card.key];
+        const value = kpi ? kpi[card.key] : 0;
         return (
           <Card key={card.title} className="relative overflow-hidden backdrop-blur-xl bg-card/50 border-border/40 hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 ease-out shadow-lg">
             <CardContent className="px-5 pb-4 pt-5">
@@ -132,7 +132,7 @@ export function KPICards() {
                 />
               </div>
               <p className="mt-1 text-right text-[10px] text-muted-foreground">
-                {((value / total) * 100).toFixed(0)}{t("dashboard.kpiOfTotal")}
+                {total > 0 ? ((value / total) * 100).toFixed(0) : 0}{t("dashboard.kpiOfTotal")}
               </p>
             </CardContent>
           </Card>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { fetchAllStudents } from "@/lib/api";
 import { useI18n } from "@/context/i18n-context";
 import type { StudentProfile } from "@/types";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Users,
   Search,
@@ -111,8 +112,22 @@ export default function AdminStudentsPage() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="rounded-xl border bg-card p-4 space-y-3">
+              <div className="flex justify-between items-start">
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+                <Skeleton className="h-5 w-16 rounded-full" />
+              </div>
+              <div className="border-t pt-3 flex items-center justify-between mt-3">
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="h-3 w-12" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed py-20 text-center text-muted-foreground">
@@ -136,7 +151,7 @@ export default function AdminStudentsPage() {
                   <p className="font-semibold">{obfuscateName(s.name)}</p>
                   <p className="font-mono text-xs text-muted-foreground">{obfuscateNIM(s.nim)}</p>
                 </div>
-                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
+                <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:text-blue-400">
                   {t("studentsPage.detailIpk")} {s.ipk.toFixed(2)}
                 </span>
               </div>

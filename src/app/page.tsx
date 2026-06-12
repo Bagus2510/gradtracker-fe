@@ -96,21 +96,21 @@ const FACULTIES: Record<string, string[]> = {
 
 const RISK_CFG = {
   High: {
-    bg: "bg-destructive/10 border-destructive/30",
-    text: "text-destructive",
-    badge: "bg-destructive text-white",
+    bg: "bg-red-500/10 border-red-500/30",
+    text: "text-red-600 dark:text-red-400",
+    badge: "bg-red-500 text-white",
     icon: AlertTriangle,
   },
   Medium: {
-    bg: "bg-accent/10 border-accent/30",
-    text: "text-accent",
-    badge: "bg-accent text-accent-foreground",
+    bg: "bg-amber-500/10 border-amber-500/30",
+    text: "text-amber-600 dark:text-amber-400",
+    badge: "bg-amber-500 text-white",
     icon: Clock,
   },
   Low: {
-    bg: "bg-secondary/10 border-secondary/30",
-    text: "text-secondary",
-    badge: "bg-secondary text-secondary-foreground",
+    bg: "bg-emerald-500/10 border-emerald-500/30",
+    text: "text-emerald-600 dark:text-emerald-400",
+    badge: "bg-emerald-500 text-white",
     icon: CheckCircle2,
   },
 } as const;
@@ -138,10 +138,10 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
                 "flex h-24 w-24 flex-col items-center justify-center rounded-full border-4 shadow-lg",
                 cfg.bg,
                 result.riskLabel === "High"
-                  ? "border-destructive"
+                  ? "border-rose-500"
                   : result.riskLabel === "Medium"
-                    ? "border-accent"
-                    : "border-secondary",
+                    ? "border-amber-500"
+                    : "border-emerald-500",
               )}
             >
               <span className={cn("text-3xl font-black tabular-nums", cfg.text)}>
@@ -182,9 +182,9 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
                     className={cn(
                       "flex items-center gap-1 text-lg font-bold",
                       result.ipsDrop > 0
-                        ? "text-destructive"
+                        ? "text-red-600 dark:text-red-400"
                         : result.ipsDrop < 0
-                          ? "text-secondary"
+                          ? "text-emerald-600 dark:text-emerald-400"
                           : "text-muted-foreground",
                     )}
                   >
@@ -219,8 +219,8 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
           <ResponsiveContainer width="100%" height={160}>
             <LineChart data={trendData}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-20" />
-              <XAxis dataKey="sem" tick={{ fontSize: 11 }} />
-              <YAxis domain={[0, 4]} tick={{ fontSize: 11 }} />
+              <XAxis dataKey="sem" tick={{ fill: "currentColor", fontSize: 11 }} stroke="currentColor" className="text-muted-foreground" />
+              <YAxis domain={[0, 4]} tick={{ fill: "currentColor", fontSize: 11 }} stroke="currentColor" className="text-muted-foreground" />
               <Tooltip
                 formatter={(v) => [typeof v === "number" ? v.toFixed(2) : v, "IPS"]}
                 contentStyle={{
@@ -261,13 +261,13 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
         </div>
         <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 shadow-xl hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 ease-out">
           <p className="mb-3 flex items-center gap-2 text-sm font-semibold">
-            <Lightbulb className="h-4 w-4 text-secondary" />
+            <Lightbulb className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             {t("publicPage.resultRecs")}
           </p>
           <ul className="space-y-2">
             {result.recommendations.map((r, i) => (
               <li key={i} className="flex items-start gap-2 text-sm">
-                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-secondary" />
+                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
                 <span>{translateBackendStr(r, lang)}</span>
               </li>
             ))}
@@ -559,7 +559,7 @@ export default function PublicPredictionPage() {
           <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 sm:p-8 shadow-xl hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 ease-out space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
             <h3 className="flex items-center justify-between gap-2 text-sm font-bold text-foreground uppercase tracking-wider">
               <span className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-primary" /> {t("publicPage.academicTitle")}</span>
-              <span className="rounded-full bg-secondary/20 px-3 py-1 text-xs font-semibold text-secondary lowercase tracking-normal">
+              <span className="rounded-full bg-blue-500/10 px-3 py-1 text-xs font-semibold text-blue-700 dark:text-blue-400 lowercase tracking-normal">
                 ipk {ipk}
               </span>
             </h3>

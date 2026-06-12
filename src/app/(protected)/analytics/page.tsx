@@ -6,6 +6,7 @@ import { useAuth } from "@/context/auth-context";
 import { PopulationCharts } from "@/components/analytics/population-charts";
 import { cn } from "@/lib/utils";
 import { Users, AlertTriangle, TrendingDown, Activity, Loader2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useI18n } from "@/context/i18n-context";
 import { useAsync } from "@/hooks/use-async";
 import { fetchKPI } from "@/lib/api";
@@ -28,32 +29,32 @@ export default function AnalyticsPage() {
       label: t("analytics.totalTitle"),
       value: kpi?.totalStudents ?? 0,
       sub: t("analytics.totalSub"),
-      color: "text-primary dark:text-primary",
-      bg: "bg-primary/20",
+      color: "text-blue-700 dark:text-blue-400",
+      bg: "bg-blue-500/10 dark:bg-blue-500/20",
     },
     {
       icon: AlertTriangle,
       label: t("analytics.highRiskTitle"),
       value: kpi?.highRiskCount ?? 0,
       sub: `${kpi?.totalStudents ? (((kpi.highRiskCount) / kpi.totalStudents) * 100).toFixed(1) : 0}${t("analytics.highRiskSub")}`,
-      color: "text-destructive dark:text-destructive",
-      bg: "bg-destructive/20",
+      color: "text-rose-700 dark:text-rose-400",
+      bg: "bg-rose-500/10 dark:bg-rose-500/20",
     },
     {
       icon: TrendingDown,
       label: t("analytics.degTitle"),
       value: "-", // Temporarily disabled since we removed mock data that tracks degradation exactly like this
       sub: t("analytics.degSub"),
-      color: "text-orange-600 dark:text-orange-500",
-      bg: "bg-orange-500/20",
+      color: "text-orange-700 dark:text-orange-400",
+      bg: "bg-orange-500/10 dark:bg-orange-500/20",
     },
     {
       icon: Activity,
       label: t("analytics.predTitle"),
       value: kpi?.predictedLate ?? 0,
       sub: `${kpi?.totalStudents ? (((kpi.predictedLate) / kpi.totalStudents) * 100).toFixed(1) : 0}${t("analytics.predSub")}`,
-      color: "text-accent dark:text-accent",
-      bg: "bg-accent/20",
+      color: "text-amber-700 dark:text-amber-400",
+      bg: "bg-amber-500/10 dark:bg-amber-500/20",
     },
   ];
 
@@ -68,8 +69,29 @@ export default function AnalyticsPage() {
       </div>
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-10 text-primary">
-          <Loader2 className="h-6 w-6 animate-spin" />
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex items-center gap-3 rounded-xl border p-4 bg-card/50">
+                <Skeleton className="h-9 w-9 rounded-lg" />
+                <div className="space-y-1.5 flex-1">
+                  <Skeleton className="h-3 w-20" />
+                  <Skeleton className="h-5 w-12" />
+                  <Skeleton className="h-2 w-16" />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="rounded-xl border bg-card p-6 space-y-4">
+              <Skeleton className="h-6 w-1/3" />
+              <Skeleton className="h-[250px] w-full" />
+            </div>
+            <div className="rounded-xl border bg-card p-6 space-y-4">
+              <Skeleton className="h-6 w-1/3" />
+              <Skeleton className="h-[250px] w-full" />
+            </div>
+          </div>
         </div>
       ) : (
         <>

@@ -6,6 +6,7 @@ import { useI18n } from "@/context/i18n-context";
 import { fetchMLModels, uploadMLModel, activateMLModel, deleteMLModel } from "@/lib/api";
 import type { MLModel } from "@/types";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   BrainCircuit,
   Upload,
@@ -225,7 +226,7 @@ function ModelCard({
       className={cn(
         "rounded-xl border bg-card p-5 shadow-sm transition-all",
         model.isActive
-          ? "border-secondary/60 ring-2 ring-secondary/30"
+          ? "border-emerald-500/50 ring-2 ring-emerald-500/30"
           : "hover:border-primary/30",
       )}
     >
@@ -234,7 +235,7 @@ function ModelCard({
           <div className="flex items-center gap-2 flex-wrap">
             <p className="font-semibold truncate">{model.name}</p>
             {model.isActive && (
-              <span className="flex items-center gap-1 rounded-full bg-secondary/20 px-2 py-0.5 text-[10px] font-bold text-secondary">
+              <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-400">
                 <Zap className="h-3 w-3" /> {t("modelsPage.cardActive")}
               </span>
             )}
@@ -246,7 +247,7 @@ function ModelCard({
         {model.accuracy !== null && (
           <div className="text-right shrink-0">
             <p className="text-[10px] text-muted-foreground">{t("modelsPage.cardAccuracy")}</p>
-            <p className="text-lg font-black text-secondary">
+            <p className="text-lg font-black text-emerald-600 dark:text-emerald-400">
               {model.accuracy?.toFixed(1)}%
             </p>
           </div>
@@ -265,7 +266,7 @@ function ModelCard({
         {!model.isActive && (
           <button
             onClick={onActivate}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-secondary/10 px-3 py-2 text-xs font-semibold text-secondary transition-colors hover:bg-secondary/20 cursor-pointer"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 transition-colors hover:bg-emerald-500/20 cursor-pointer"
           >
             <Zap className="h-3.5 w-3.5" /> {t("modelsPage.cardActivateBtn")}
           </button>
@@ -358,7 +359,7 @@ export default function ModelsPage() {
       </div>
 
       {message && (
-        <div className="flex items-center gap-2 rounded-lg border border-secondary/30 bg-secondary/10 p-3 text-sm text-secondary">
+        <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700 dark:text-emerald-400">
           <CheckCircle2 className="h-4 w-4 shrink-0" />
           {message}
         </div>
@@ -372,8 +373,24 @@ export default function ModelsPage() {
           {models.length} {t("modelsPage.listCount")}
         </p>
         {loading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="rounded-xl border bg-card p-5 space-y-4">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-2 flex-1">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-3 w-1/2" />
+                  </div>
+                  <Skeleton className="h-8 w-12" />
+                </div>
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-2 w-1/3" />
+                <div className="flex gap-2 pt-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : models.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed py-16 text-muted-foreground">
