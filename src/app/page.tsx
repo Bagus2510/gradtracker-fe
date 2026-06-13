@@ -405,13 +405,10 @@ export default function PublicPredictionPage() {
     }
   };
 
-  const ipk =
-    form.ips.filter((v) => v > 0).length > 0
-      ? (
-          form.ips.filter((v) => v > 0).reduce((a, b) => a + b, 0) /
-          form.ips.filter((v) => v > 0).length
-        ).toFixed(2)
-      : "—";
+  const validIps = form.ips.slice(0, form.current_semester);
+  const ipk = validIps.length > 0
+    ? (validIps.reduce((a, b) => a + b, 0) / validIps.length).toFixed(2)
+    : "—";
 
   if (booting) {
     return <BootSequence onComplete={() => setBooting(false)} />;

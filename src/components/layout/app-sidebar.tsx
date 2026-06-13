@@ -36,9 +36,16 @@ export function AppSidebar() {
     { href: "/analytics",    label: t("sidebar.analytics"),    icon: BarChart3       },
     { href: "/models",       label: t("sidebar.models"),       icon: BrainCircuit    },
     { href: "/predictions",  label: t("sidebar.predictions"),  icon: ScrollText      },
+    { href: "/users",        label: t("sidebar.users"),        icon: Users           },
   ];
 
-  const navItems = ADMIN_NAV;
+  const KAPRODI_NAV = [
+    { href: "/dashboard",    label: t("sidebar.dashboard"),    icon: LayoutDashboard },
+    { href: "/students",     label: t("sidebar.students"),     icon: Users           },
+    { href: "/analytics",    label: t("sidebar.analytics"),    icon: BarChart3       },
+  ];
+
+  const navItems = user?.role === "admin" ? ADMIN_NAV : KAPRODI_NAV;
 
   const initials =
     user?.name

@@ -19,8 +19,15 @@ export default function ProtectedLayout({
     if (!isLoading) {
       if (!user) {
         router.replace("/login");
-      } else if (user.role !== "admin") {
+      } else if (user.role !== "admin" && user.role !== "kaprodi") {
         router.replace("/");
+      } else if (user.role === "kaprodi") {
+        // Guard restricted routes
+        const pathname = window.location.pathname;
+        if (pathname.startsWith("/models") || pathname.startsWith("/predictions") || pathname.startsWith("/users")) {
+          // If Kaprodi tries to access admin-only routes, push them back to dashboard
+          router.replace("/dashboard");
+        }
       }
     }
   }, [user, isLoading, router]);

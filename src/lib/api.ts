@@ -37,7 +37,6 @@ function authHeaders(): HeadersInit {
 }
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  if (!API_BASE) throw new Error("API_BASE not configured");
   const res = await fetch(`${API_BASE}${path}`, {
     ...init,
     headers: { ...authHeaders(), ...(init?.headers ?? {}) },
@@ -63,34 +62,22 @@ export async function predictPublicRisk(
 // ── Dashboard (Admin) ─────────────────────────────────────────────────────────
 
 export async function fetchKPI(): Promise<KPISummary> {
-  if (!API_BASE) {
-    return {
-      totalStudents: 0,
-      predictedOnTime: 0,
-      predictedLate: 0,
-      highRiskCount: 0,
-      todaySubmissions: 0,
-    };
-  }
   return apiFetch<KPISummary>("/api/dashboard/kpi");
 }
 
 export async function fetchIPSTrend(): Promise<IPSTrendPoint[]> {
-  if (!API_BASE) return [];
   return apiFetch<IPSTrendPoint[]>("/api/dashboard/ips-trend");
 }
 
 // ── Analytics (Admin) ─────────────────────────────────────────────────────────
 
 export async function fetchAgeDistribution(): Promise<PopulationDataPoint[]> {
-  if (!API_BASE) return [];
   return apiFetch<PopulationDataPoint[]>("/api/analytics/age-distribution");
 }
 
 export async function fetchEmploymentDistribution(): Promise<
   PopulationDataPoint[]
 > {
-  if (!API_BASE) return [];
   return apiFetch<PopulationDataPoint[]>(
     "/api/analytics/employment-distribution",
   );
@@ -101,10 +88,9 @@ export async function fetchEmploymentDistribution(): Promise<
 export async function fetchAllStudents(params?: {
   program?: string;
 }): Promise<StudentProfile[]> {
-  if (!API_BASE) return [];
-  const url = new URL(`${API_BASE}/api/admin/students`);
-  if (params?.program) url.searchParams.set("program", params.program);
-  const res = await fetch(url.toString(), { headers: authHeaders() });
+  let path = `${API_BASE}/api/admin/students`;
+  if (params?.program) path += `?program=${encodeURIComponent(params.program)}`;
+  const res = await fetch(path, { headers: authHeaders() });
   if (!res.ok) throw new Error("Failed to fetch students");
   return res.json();
 }
@@ -112,7 +98,6 @@ export async function fetchAllStudents(params?: {
 export async function fetchStudentByNim(
   nim: string,
 ): Promise<StudentProfile | null> {
-  if (!API_BASE) return null;
   try {
     return await apiFetch<StudentProfile>(`/api/admin/students/${nim}`);
   } catch {
@@ -123,7 +108,6 @@ export async function fetchStudentByNim(
 export async function fetchAllPredictions(
   limit = 50,
 ): Promise<PredictionLogEntry[]> {
-  if (!API_BASE) return [];
   return apiFetch<PredictionLogEntry[]>(
     `/api/admin/predictions?limit=${limit}`,
   );
@@ -132,14 +116,12 @@ export async function fetchAllPredictions(
 // ── Admin ML Models ────────────────────────────────────────────────────────────
 
 export async function fetchMLModels(): Promise<MLModel[]> {
-  if (!API_BASE) return [];
   return apiFetch<MLModel[]>("/api/admin/models");
 }
 
 export async function uploadMLModel(
   formData: FormData,
 ): Promise<MLModel> {
-  if (!API_BASE) throw new Error("API not configured");
   const token = getToken();
   const res = await fetch(`${API_BASE}/api/admin/models`, {
     method: "POST",
@@ -161,6 +143,25 @@ export async function activateMLModel(id: number): Promise<MLModel> {
 
 export async function deleteMLModel(id: number): Promise<void> {
   await apiFetch<{ message: string }>(`/api/admin/models/${id}`, {
+    method: "DELETE",
+  });
+}
+
+// ── Admin Users ──────────────────────────────────────────────────────────────
+
+export async function fetchUsers(): Promise<any[]> {
+  return apiFetch<any[]>("/api/admin/users");
+}
+
+export async function createUser(data: any): Promise<any> {
+  return apiFetch<any>("/api/admin/users", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteUser(id: string): Promise<void> {
+  await apiFetch<{ message: string }>(`/api/admin/users/${id}`, {
     method: "DELETE",
   });
 }
