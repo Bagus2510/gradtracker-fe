@@ -60,8 +60,8 @@ export function AppSidebar() {
       {/* ── Brand ── */}
       <SidebarHeader className="px-4 pb-5 pt-[max(env(safe-area-inset-top),1.25rem)] [-webkit-app-region:drag]">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20">
-            <GraduationCap className="h-6 w-6 text-white" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center">
+            <img src="/logo.png" alt="GradTracker Logo" className="h-full w-full object-contain" />
           </div>
           <div className="leading-tight">
             <p className="text-base font-extrabold text-sidebar-foreground">

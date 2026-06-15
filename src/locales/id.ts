@@ -327,7 +327,7 @@ export const id = {
   },
   usersPage: {
     title: "Kelola Akses/User",
-    desc: "Tambah dan kelola akun Kaprodi, Admin, atau Mahasiswa.",
+    desc: "Tambah dan kelola akun Kaprodi.",
     btnAdd: "Tambah User",
     formTitle: "Tambah User Baru",
     idLabel: "ID (Unik)",

@@ -31,7 +31,8 @@ export default function UsersPage() {
     try {
       setLoading(true);
       const data = await fetchUsers();
-      setUsers(data);
+      const kaprodiUsers = data.filter((u: any) => u.role !== "admin");
+      setUsers(kaprodiUsers);
     } catch (err) {
       console.error(err);
     } finally {

@@ -118,46 +118,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   const login = async (username: string, password: string) => {
-    // ── Real API login ──────────────────────────────────────────────────────
-    if (API_BASE) {
-      try {
-        const res = await fetch(`${API_BASE}/api/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password }),
-        });
-        if (res.ok) {
-          const data = await res.json();
-          const userOut: User = data.user;
-          localStorage.setItem(TOKEN_KEY, data.access_token);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(userOut));
-          setUser(userOut);
-          return { success: true };
-        }
-        const errData = await res.json().catch(() => ({}));
-        return {
-          success: false,
-          error: errData.detail ?? "Login gagal. Coba lagi.",
-        };
-      } catch {
-        return { success: false, error: "Tidak dapat terhubung ke server." };
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const userOut: User = data.user;
+        localStorage.setItem(TOKEN_KEY, data.access_token);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(userOut));
+        setUser(userOut);
+        return { success: true };
       }
+      const errData = await res.json().catch(() => ({}));
+      return {
+        success: false,
+        error: errData.detail ?? "Login gagal. Coba lagi.",
+      };
+    } catch {
+      return { success: false, error: "Tidak dapat terhubung ke server." };
     }
 
-    // ── Mock fallback (dev mode without backend) ────────────────────────────
-    await new Promise((r) => setTimeout(r, 500));
-    const match = MOCK_USERS.find(
-      (u) =>
-        (u.id === username || u.nim === username) && u.password === password,
-    );
-    if (!match) {
-      return { success: false, error: "Username atau password salah." };
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _, ...userWithoutPassword } = match;
-    setUser(userWithoutPassword);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(userWithoutPassword));
-    return { success: true };
   };
 
   const logout = () => {

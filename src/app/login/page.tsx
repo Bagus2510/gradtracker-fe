@@ -49,8 +49,8 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
       <div className="w-full max-w-md space-y-6 rounded-2xl border bg-card p-8 shadow-xl">
         <div className="flex flex-col items-center gap-2 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Lock className="h-6 w-6" />
+          <div className="flex h-12 w-12 items-center justify-center">
+            <img src="/logo.png" alt="GradTracker Logo" className="h-full w-full object-contain" />
           </div>
           <h1 className="text-2xl font-bold">{t("login.heroHeading")}</h1>
           <p className="text-sm text-muted-foreground">

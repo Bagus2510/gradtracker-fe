@@ -423,8 +423,8 @@ export default function PublicPredictionPage() {
       {/* Header */}
       <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/60 px-4 backdrop-blur-xl sm:px-8">
         <div className="flex items-center gap-2 text-primary font-bold">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-            <Cpu className="h-5 w-5" />
+          <div className="flex h-8 w-8 items-center justify-center">
+            <img src="/logo.png" alt="GradTracker Logo" className="h-full w-full object-contain" />
           </div>
           <span className="text-lg tracking-tight">GradTracker</span>
         </div>

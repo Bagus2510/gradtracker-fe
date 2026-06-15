@@ -325,7 +325,7 @@ export const en = {
   },
   usersPage: {
     title: "Manage Users & Access",
-    desc: "Add and manage Kaprodi, Admin, or Student accounts.",
+    desc: "Add and manage Kaprodi accounts.",
     btnAdd: "Add User",
     formTitle: "Add New User",
     idLabel: "ID (Unique)",
