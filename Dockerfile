@@ -15,7 +15,9 @@ COPY . .
 # NEXT_PUBLIC_ vars must be available at BUILD time (not runtime)
 # Pass via docker-compose: build.args or environment
 ARG NEXT_PUBLIC_API_URL=http://localhost:8000
+ARG BACKEND_API_URL=http://gradtracker-be:8000
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV BACKEND_API_URL=${BACKEND_API_URL}
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build
