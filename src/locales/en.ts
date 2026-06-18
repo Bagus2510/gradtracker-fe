@@ -216,6 +216,7 @@ export const en = {
     submitBtnRetry: "Re-Predict",
     submitBtnFirst: "Predict Now",
     errorPredict: "Failed to process prediction.",
+    errorIpsIncomplete: "Fill in GPA for every semester (1 through your current semester). Zero values are not counted.",
     resultTitle: "Prediction Result",
     resultDesc: "Based on the entered data, here is the prediction from our AI model.",
     resultPrediction: "Graduation Prediction",

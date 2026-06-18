@@ -3,6 +3,15 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { predictPublicRisk } from "@/lib/api";
+import {
+  MAX_SEMESTER,
+  computeIpk,
+  createEmptyIps,
+  getActiveIps,
+  parseIpsInput,
+  refinePredictionResult,
+  validateActiveIps,
+} from "@/lib/ips";
 import type { PublicPredictInput, PredictionResult } from "@/types";
 import { cn } from "@/lib/utils";
 import {
@@ -371,7 +380,7 @@ export default function PublicPredictionPage() {
     employment_status: "Unemployed",
     program: "",
     entry_year: new Date().getFullYear() - 2,
-    ips: [0, 0, 0, 0, 0, 0, 0, 0],
+    ips: createEmptyIps(),
     current_semester: 1,
   });
 
@@ -380,20 +389,37 @@ export default function PublicPredictionPage() {
   const [error, setError] = useState<string | null>(null);
 
   const handleIPSChange = (idx: number, val: string) => {
-    const parsed = parseFloat(val);
     const newIps = [...form.ips];
-    newIps[idx] = isNaN(parsed) ? 0 : Math.min(4.0, Math.max(0, parsed));
+    while (newIps.length <= idx) newIps.push(0);
+    newIps[idx] = parseIpsInput(val);
     setForm((f) => ({ ...f, ips: newIps }));
+  };
+
+  const handleSemesterChange = (semester: number) => {
+    setForm((f) => {
+      const ips = [...f.ips];
+      while (ips.length < semester) ips.push(0);
+      return { ...f, current_semester: semester, ips };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateActiveIps(form.ips, form.current_semester)) {
+      setError(t("publicPage.errorIpsIncomplete"));
+      return;
+    }
     setPredicting(true);
     setError(null);
     try {
-      const payload = { ...form, program: `${level} - ${form.program}` };
+      const activeIps = getActiveIps(form.ips, form.current_semester);
+      const payload = {
+        ...form,
+        ips: activeIps,
+        program: `${level} - ${form.program}`,
+      };
       const res = await predictPublicRisk(payload);
-      setResult(res);
+      setResult(refinePredictionResult(res, activeIps, form.current_semester, level));
       // Scroll to result slightly delay
       setTimeout(() => {
         window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
@@ -405,10 +431,7 @@ export default function PublicPredictionPage() {
     }
   };
 
-  const validIps = form.ips.slice(0, form.current_semester);
-  const ipk = validIps.length > 0
-    ? (validIps.reduce((a, b) => a + b, 0) / validIps.length).toFixed(2)
-    : "—";
+  const ipk = computeIpk(form.ips, form.current_semester);
 
   if (booting) {
     return <BootSequence onComplete={() => setBooting(false)} />;
@@ -621,9 +644,9 @@ export default function PublicPredictionPage() {
                 <select
                   className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
                   value={form.current_semester}
-                  onChange={(e) => setForm((f) => ({ ...f, current_semester: parseInt(e.target.value) }))}
+                  onChange={(e) => handleSemesterChange(parseInt(e.target.value))}
                 >
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((s) => (
+                  {Array.from({ length: MAX_SEMESTER }, (_, i) => i + 1).map((s) => (
                     <option key={s} value={s}>{t("publicPage.academicSemesterVal")} {s}</option>
                   ))}
                 </select>
@@ -634,8 +657,19 @@ export default function PublicPredictionPage() {
               <p className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
                 <TrendingUp className="h-3 w-3" /> {t("publicPage.academicIps")}
               </p>
-              <div className="grid grid-cols-4 gap-2 sm:grid-cols-8">
-                {form.ips.map((val, idx) => (
+              <div
+                className={cn(
+                  "grid gap-2",
+                  form.current_semester <= 4
+                    ? "grid-cols-2 sm:grid-cols-4"
+                    : form.current_semester <= 8
+                      ? "grid-cols-4 sm:grid-cols-4"
+                      : "grid-cols-4 sm:grid-cols-6",
+                )}
+              >
+                {Array.from({ length: form.current_semester }, (_, idx) => {
+                  const val = form.ips[idx] ?? 0;
+                  return (
                   <label key={idx} className="space-y-1">
                     <span className="block text-center text-[10px] text-muted-foreground">
                       {t("publicPage.semLabel")} {idx + 1}
@@ -645,19 +679,15 @@ export default function PublicPredictionPage() {
                       step="0.01"
                       min="0"
                       max="4.00"
-                      className={cn(
-                        "w-full rounded-lg border px-1 py-1.5 text-center text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/40",
-                        idx >= form.current_semester
-                          ? "bg-muted text-muted-foreground opacity-40"
-                          : "bg-background",
-                      )}
+                      className="w-full rounded-lg border bg-background px-1 py-1.5 text-center text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/40"
                       value={val === 0 ? "" : val}
-                      disabled={idx >= form.current_semester}
                       placeholder="0.00"
+                      required
                       onChange={(e) => handleIPSChange(idx, e.target.value)}
                     />
                   </label>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
