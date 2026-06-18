@@ -218,6 +218,7 @@ export const id = {
     submitBtnRetry: "Prediksi Ulang",
     submitBtnFirst: "Prediksi Sekarang",
     errorPredict: "Gagal memproses prediksi.",
+    errorIpsIncomplete: "Lengkapi IPS untuk semua semester (1 sampai semester saat ini). Nilai 0 tidak dihitung.",
     resultTitle: "Hasil Prediksi",
     resultDesc: "Berdasarkan data yang dimasukkan, berikut adalah prediksi dari model AI kami.",
     resultPrediction: "Prediksi Kelulusan",
