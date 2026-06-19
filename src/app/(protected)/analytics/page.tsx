@@ -18,10 +18,10 @@ export default function AnalyticsPage() {
   const { data: kpi, isLoading } = useAsync(fetchKPI);
 
   useEffect(() => {
-    if (user && user.role !== "admin") router.replace("/profile");
+    if (user && user.role !== "admin" && user.role !== "kaprodi") router.replace("/");
   }, [user, router]);
 
-  if (!user || user.role !== "admin") return null;
+  if (!user || (user.role !== "admin" && user.role !== "kaprodi")) return null;
 
   const kpis = [
     {

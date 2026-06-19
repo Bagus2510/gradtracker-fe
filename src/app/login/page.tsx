@@ -27,7 +27,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (user?.role === "admin") {
+    if (user?.role === "admin" || user?.role === "kaprodi") {
       router.replace("/dashboard");
     }
   }, [user, router]);

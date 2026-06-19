@@ -154,7 +154,11 @@ export default function UsersPage() {
                 <td className="px-4 py-3">{u.name}</td>
                 <td className="px-4 py-3">
                   <span className="inline-flex rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary uppercase">
-                    {u.role}
+                    {u.role === "kaprodi"
+                      ? t("usersPage.roleKaprodi")
+                      : u.role === "admin"
+                      ? t("usersPage.roleAdmin")
+                      : t("usersPage.roleStudent")}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-right">

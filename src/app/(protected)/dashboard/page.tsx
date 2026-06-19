@@ -13,10 +13,10 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (user && user.role !== "admin") router.replace("/profile");
+    if (user && user.role !== "admin" && user.role !== "kaprodi") router.replace("/");
   }, [user, router]);
 
-  if (!user || user.role !== "admin") return null;
+  if (!user || (user.role !== "admin" && user.role !== "kaprodi")) return null;
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">

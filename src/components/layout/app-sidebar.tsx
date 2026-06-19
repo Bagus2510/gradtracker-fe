@@ -68,7 +68,9 @@ export function AppSidebar() {
               GradTracker
             </p>
             <p className="text-xs font-medium capitalize text-sidebar-foreground/60">
-              {t("sidebar.adminPanel")}
+              {user?.role === "kaprodi"
+                ? t("sidebar.kaprodiPanel")
+                : t("sidebar.adminPanel")}
             </p>
           </div>
         </div>

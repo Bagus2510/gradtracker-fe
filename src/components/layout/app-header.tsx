@@ -45,13 +45,19 @@ export function AppHeader() {
   const Icon = metaConfig?.icon;
   const pageTitle = metaConfig ? t(metaConfig.titleKey) : "GradTracker";
 
-  const roleBadgeLabel = user?.role === "admin"
-    ? t("header.roleBadgeAdmin")
-    : t("header.roleBadgeStudent");
+  const roleBadgeLabel =
+    user?.role === "admin"
+      ? t("header.roleBadgeAdmin")
+      : user?.role === "kaprodi"
+      ? t("header.roleBadgeKaprodi")
+      : t("header.roleBadgeStudent");
 
-  const roleBadgeClasses = user?.role === "admin"
-    ? "bg-primary/20 text-primary border border-primary dark:bg-primary/20 dark:text-primary dark:border-primary"
-    : "bg-emerald-500/10 text-emerald-700 border border-emerald-500/30 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30";
+  const roleBadgeClasses =
+    user?.role === "admin"
+      ? "bg-primary/20 text-primary border border-primary dark:bg-primary/20 dark:text-primary dark:border-primary"
+      : user?.role === "kaprodi"
+      ? "bg-amber-500/10 text-amber-700 border border-amber-500/30 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30"
+      : "bg-emerald-500/10 text-emerald-700 border border-emerald-500/30 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30";
 
   return (
     <header className="sticky top-0 z-10 flex h-[max(3.5rem,env(safe-area-inset-top))] shrink-0 items-center gap-2 border-b bg-background/80 px-4 backdrop-blur-md pt-[env(safe-area-inset-top)] [-webkit-app-region:drag]">
